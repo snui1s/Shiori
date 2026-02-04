@@ -1,17 +1,422 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import { db, Post, desc } from "astro:db";
 
+const rawPosts = await db
+  .select()
+  .from(Post)
+  .orderBy(desc(Post.createdAt))
+  .limit(6);
+
+const posts = rawPosts.map((post) => ({
+  id: post.slug,
+  title: post.title,
+  excerpt: post.excerpt,
+  date: new Date(post.createdAt).toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }),
+  category: post.category,
+  image:
+    post.imageUrl ||
+    "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e",
+  author: post.author,
+}));
+
+// Random "Now" data
+const listeningOptions = [
+  "MF DOOM",
+  "Nujabes",
+  "Lamp",
+  "Ichiko Aoba",
+  "Fishmans",
+  "Laufey",
+  "Cigarettes After Sex",
+  "Madvillain",
+  "Toe",
+  "Quasimoto",
+  "Massive Attack",
+  "Tatsuro Yamashita",
+  "J Dilla",
+  "Gorillaz",
+];
+
+const readingOptions = [
+  "Kitchen",
+  "No Longer Human",
+  "Norwegian Wood",
+  "The Little Prince",
+  "Kafka on the Shore",
+  "The Decagon House Murders",
+  "Goth",
+  "Zero to One",
+  "Designing Data-Intensive Applications",
+  "The Courage to Be Disliked",
+  "Sapiens",
+  "Atomic Habits",
+  "The Alchemist",
+  "1984",
+  "Man's Search for Meaning",
+  "Thinking, Fast and Slow",
+  "The Subtle Art of Not Giving a F*ck",
+  "Almond",
+  "The 7 Habits of Highly Effective People",
+  "Deep Work",
+  "Never Split the Difference",
+  "To Kill a Mockingbird",
+  "The Great Gatsby",
+  "Animal Farm",
+];
+
+const moodOptions = [
+  "Cozy & Chill",
+  "Melancholic",
+  "Productive",
+  "Dreamy",
+  "Adventure Mode",
+  "Deep Work State",
+  "Existential Crisis",
+  "Mystery Solving",
+  "Late Night Debugging",
+  "Aspiring PM Energy",
+  "Post-Workout High",
+  "5cm Per Second Vibe",
+];
+
+const nowStatus = {
+  listening:
+    listeningOptions[Math.floor(Math.random() * listeningOptions.length)],
+  reading: readingOptions[Math.floor(Math.random() * readingOptions.length)],
+  mood: moodOptions[Math.floor(Math.random() * moodOptions.length)],
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Shiori - A blog">
+  <section class="hero">
+    <div class="container hero-content">
+      <h1 class="hero-title">
+        Sharing Life through <span class="gradient-text">Blog</span>
+      </h1>
+      <p class="hero-subtitle">
+        รวมฮาวทู รีวิวโน่นนี่ แล้วก็บันทึกมั่วๆ เกี่ยวกับเรื่องราวในชีวิต
+      </p>
+      <div class="hero-actions">
+        <a href="/blog" class="btn btn-primary">อ่านบันทึกทั้งหมด</a>
+      </div>
+    </div>
+    <div class="hero-bg-accent"></div>
+  </section>
+
+  <section id="featured" class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">ช่วงนี้มีอะไรอัปเดตบ้าง</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="post-grid">
+        {
+          posts.map((post) => (
+            <article class="post-card glass">
+              <div class="post-image">
+                <img src={post.image} alt={post.title} />
+              </div>
+              <div class="post-content">
+                <span class="post-category">{post.category}</span>
+                <h3 class="post-title">
+                  <a href={`/blog/${post.id}`}>{post.title}</a>
+                </h3>
+                <p class="post-excerpt">{post.excerpt}</p>
+                <div class="post-footer">
+                  <span class="post-date">{post.date}</span>
+                  <span class="post-author">By {post.author}</span>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="now-section">
+    <div class="container">
+      <div class="now-card glass">
+        <div class="now-header">
+          <span class="pulse-icon"></span>
+          <h2>ตอนนี้กำลัง...</h2>
+        </div>
+
+        <div class="now-grid">
+          <div class="now-item">
+            <span class="now-label">🎧 ฟัง</span>
+            <p class="now-value">{nowStatus.listening}</p>
+          </div>
+          <div class="now-item">
+            <span class="now-label">📖 อ่าน</span>
+            <p class="now-value">{nowStatus.reading}</p>
+          </div>
+          <div class="now-item">
+            <span class="now-label">✨ รู้สึก</span>
+            <p class="now-value">{nowStatus.mood}</p>
+          </div>
+        </div>
+
+        <div class="now-footer">
+          <p>แวะมาเยี่ยมเยียนกันบ่อยๆนะ</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .hero {
+      position: relative;
+      padding: 8rem 0 6rem;
+      overflow: hidden;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 800px;
+      margin-inline: auto;
+    }
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--color-text-muted);
+      margin-bottom: 2.5rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .hero-bg-accent {
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 40%;
+      height: 60%;
+      background: radial-gradient(
+        circle,
+        var(--color-accent) 0%,
+        transparent 70%
+      );
+      opacity: 0.2;
+      filter: blur(60px);
+      z-index: 1;
+    }
+
+    .featured-section {
+      padding: 4rem 0;
+    }
+    .section-header {
+      margin-bottom: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .title-line {
+      width: 60px;
+      height: 4px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-bottom: 6rem;
+    }
+    .post-card {
+      overflow: hidden;
+      transition:
+        transform 0.3s ease,
+        border-color 0.3s ease;
+    }
+    .post-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--color-primary);
+    }
+    .post-image {
+      height: 200px;
+      overflow: hidden;
+    }
+    .post-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .post-card:hover .post-image img {
+      transform: scale(1.05);
+    }
+    .post-content {
+      padding: 1.5rem;
+    }
+    .post-category {
+      display: inline-block;
+      color: var(--color-primary);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .post-title a {
+      color: white;
+    }
+    .post-excerpt {
+      color: var(--color-text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .post-footer {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    .btn {
+      padding: 0.8rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--color-secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -10px var(--color-primary);
+    }
+    .btn-outline {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: white;
+    }
+
+    .now-section {
+      margin: 4rem 0 8rem;
+    }
+    .now-card {
+      padding: 3rem;
+      margin-inline: auto;
+      max-width: 1000px;
+      position: relative;
+      overflow: hidden;
+    }
+    .now-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      justify-content: center;
+    }
+    .now-header h2 {
+      font-size: 2rem;
+      margin: 0;
+    }
+    .pulse-icon {
+      width: 12px;
+      height: 12px;
+      background: #4ade80;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 10px #4ade80;
+    }
+    .pulse-icon::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% {
+        width: 100%;
+        height: 100%;
+        opacity: 0.6;
+      }
+      100% {
+        width: 300%;
+        height: 300%;
+        opacity: 0;
+      }
+    }
+    .now-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .now-item {
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.3s ease;
+    }
+    .now-item:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .now-label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .now-value {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 0;
+      color: white;
+    }
+    .now-footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .now-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

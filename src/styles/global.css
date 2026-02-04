@@ -1,0 +1,105 @@
+:root {
+  --color-primary: #f63049;
+  --color-secondary: #d02752;
+  --color-accent: #8a244b;
+  --color-bg: #111f35;
+  --color-text: #ffffff;
+  --color-text-muted: #a0aec0;
+  --font-main: 'IBM Plex Sans Thai', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-heading: 'Outfit', 'IBM Plex Sans Thai', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #ffffff;
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a:hover {
+  color: var(--color-secondary);
+  opacity: 0.9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Tiptap Editor & Content Styles */
+.ProseMirror {
+  outline: none;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #a0aec0;
+  pointer-events: none;
+  height: 0;
+}
+.rich-text-content h2, .ProseMirror h2 {
+  font-size: 2rem;
+  margin: 2rem 0 1rem;
+  color: white;
+}
+.rich-text-content p, .ProseMirror p {
+  margin-bottom: 1.2rem;
+  line-height: 1.8;
+}
+.rich-text-content blockquote, .ProseMirror blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding: 0.5rem 1.5rem;
+  margin: 1.5rem 0;
+  background: rgba(246, 48, 73, 0.05);
+  font-style: italic;
+}
+.rich-text-content img, .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.8rem;
+  margin: 1.5rem 0;
+}

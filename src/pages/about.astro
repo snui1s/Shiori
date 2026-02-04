@@ -1,0 +1,216 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="About Me | Shiori 栞">
+  <section class="container about-section">
+    <div class="about-grid">
+      <div class="about-image-container">
+        <div class="image-wrapper glass">
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop"
+            alt="Pawee (Nail)"
+            class="profile-img"
+          />
+        </div>
+        <div class="experience-badge glass">
+          <span class="badge-number">CPF</span>
+          <span class="badge-text">HR AI Intern</span>
+        </div>
+      </div>
+
+      <div class="about-content">
+        <header>
+          <span class="sub-title">Nice to meet you!</span>
+          <h1 class="gradient-text">
+            สวัสดีครับ ผมปวีร์ หรือชื่อในวงการ(วงเพื่อน)ว่า เนล นะครับ
+          </h1>
+        </header>
+
+        <article class="bio-text">
+          <p>
+            ปัจจุบันผมเป็นเด็กฝึกงาน (Intern) ที่ <strong>CPF</strong> ในตำแหน่ง <strong
+              >HR AI</strong
+            > ครับ หน้าเว็บนี้เลยตั้งใจให้เป็นพื้นที่เล็กๆ สำหรับอัปเดตเรื่องราวต่างๆ
+            ในชีวิตของผม
+          </p>
+          <p>
+            ผมสร้าง Blog นี้ขึ้นมาเพราะอยากจะใช้มันเป็นเหมือน <strong
+              >"Time Capsule"</strong
+            >
+            เล่าเรื่องราวที่เจอมาในแต่ละวัน เพื่อให้ในอนาคตพอผมย้อนกลับมาดู จะได้เห็นถึงการเติบโต
+            และเรื่องราวดีๆ ที่แฝงอยู่ในความทรงจำพวกนั้น
+          </p>
+          <p class="thank-you">
+            ขอบคุณทุกคนที่แวะเวียนเข้ามา และขอบคุณมากๆ
+            ครับที่เสียเวลาเข้ามาอ่านบันทึกมั่วๆ ของผม 🌙✨
+          </p>
+        </article>
+
+        <div class="about-actions">
+          <a href="/blog" class="btn btn-primary">ดูบันทึกทั้งหมด</a>
+          <div class="social-links">
+            <!-- เจ๊เอาลิงก์โซเชียลจริงมาใส่ตรงนี้ได้นะครับ -->
+            <div class="dot-indicator"></div>
+            <span>Status: Building the future with AI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .about-section {
+    padding: 8rem 0;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .about-image-container {
+    position: relative;
+  }
+  .image-wrapper {
+    padding: 1rem;
+    border-radius: 2rem;
+    overflow: hidden;
+    transform: rotate(-3deg);
+    transition: all 0.5s ease;
+  }
+  .about-image-container:hover .image-wrapper {
+    transform: rotate(0deg) scale(1.02);
+  }
+  .profile-img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: 1.5rem;
+  }
+
+  .experience-badge {
+    position: absolute;
+    bottom: -2rem;
+    right: -2rem;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 1.5rem;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 10;
+    animation: floating 3s ease-in-out infinite;
+  }
+  @keyframes floating {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .badge-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+  }
+  .badge-text {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+  }
+
+  .sub-title {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.9rem;
+  }
+  .about-content h1 {
+    font-size: 3.5rem;
+    margin-top: 1rem;
+    line-height: 1.1;
+  }
+
+  .bio-text {
+    margin: 2.5rem 0;
+  }
+  .bio-text p {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+  }
+  .bio-text strong {
+    color: white;
+  }
+  .thank-you {
+    font-style: italic;
+    border-left: 3px solid var(--color-primary);
+    padding-left: 1.5rem;
+    margin-top: 3rem !important;
+  }
+
+  .about-actions {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+  .btn-primary {
+    padding: 1rem 2.5rem;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 1rem;
+    font-weight: 600;
+    box-shadow: 0 10px 20px -10px var(--color-primary);
+  }
+
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+  .dot-indicator {
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #4ade80;
+  }
+
+  @media (max-width: 968px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .about-image-container {
+      max-width: 400px;
+      margin: 0 auto 4rem;
+    }
+    .experience-badge {
+      right: 0;
+    }
+    .about-content h1 {
+      font-size: 2.5rem;
+    }
+    .about-actions {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .thank-you {
+      text-align: left;
+    }
+  }
+</style>

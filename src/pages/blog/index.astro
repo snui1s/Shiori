@@ -1,0 +1,385 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { db, Post, desc, count, and, like, eq, sql } from "astro:db";
+
+const postsPerPage = 9;
+const url = new URL(Astro.request.url);
+const currentPage = parseInt(url.searchParams.get("page") || "1");
+const searchQuery = url.searchParams.get("search") || "";
+const categoryFilter = url.searchParams.get("category") || "";
+const offset = (currentPage - 1) * postsPerPage;
+
+// Fetch unique categories for the filter bar
+const categoriesResult = await db
+  .selectDistinct({ category: Post.category })
+  .from(Post);
+const allCategories = categoriesResult.map((c) => c.category);
+
+// Build dynamic WHERE clause
+const whereClause = and(
+  searchQuery
+    ? or(
+        like(Post.title, `%${searchQuery}%`),
+        like(Post.excerpt, `%${searchQuery}%`),
+      )
+    : undefined,
+  categoryFilter ? eq(Post.category, categoryFilter) : undefined,
+);
+
+// We need or from astro:db as well, let me fix the import
+import { or } from "astro:db";
+
+const [totalCountResult] = await db
+  .select({ value: count() })
+  .from(Post)
+  .where(whereClause);
+
+const totalPosts = totalCountResult.value;
+const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+const rawPosts = await db
+  .select()
+  .from(Post)
+  .where(whereClause)
+  .orderBy(desc(Post.createdAt))
+  .limit(postsPerPage)
+  .offset(offset);
+
+const posts = rawPosts.map((post) => ({
+  id: post.slug,
+  title: post.title,
+  excerpt: post.excerpt,
+  date: new Date(post.createdAt).toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }),
+  category: post.category,
+  image:
+    post.imageUrl ||
+    "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e",
+  author: post.author,
+}));
+---
+
+<Layout title="All Articles | Shiori 栞">
+  <section class="container blog-index">
+    <header class="page-header">
+      <h1 class="gradient-text">รวมบันทึกทั้งหมด</h1>
+      <p>
+        คลังความทรงจำที่รวบรวมเรื่องราวสำคัญ (และไม่ค่อยจะสำคัญ) ในชีวิตของฉัน
+      </p>
+    </header>
+
+    <div class="search-filter-container container">
+      <form class="search-form" method="GET">
+        <div class="search-input-wrapper glass">
+          <input
+            type="text"
+            name="search"
+            placeholder="ค้นหาเรื่องที่สนใจ..."
+            value={searchQuery}
+            class="search-input"
+          />
+          <button type="submit" class="btn-search-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><circle cx="11" cy="11" r="8"></circle><line
+                x1="21"
+                y1="21"
+                x2="16.65"
+                y2="16.65"></line></svg
+            >
+          </button>
+        </div>
+        {
+          categoryFilter && (
+            <input type="hidden" name="category" value={categoryFilter} />
+          )
+        }
+      </form>
+
+      <div class="category-wrapper">
+        <div class="category-filters">
+          <a
+            href="/blog"
+            class={`filter-tag glass ${!categoryFilter ? "active" : ""}`}
+          >
+            ทั้งหมด
+          </a>
+          {
+            allCategories.map((cat) => (
+              <a
+                href={`/blog?category=${cat}${searchQuery ? `&search=${searchQuery}` : ""}`}
+                class={`filter-tag glass ${categoryFilter === cat ? "active" : ""}`}
+              >
+                {cat}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="post-grid">
+      {
+        posts.map((post) => (
+          <article class="post-card glass">
+            <div class="post-image">
+              <img src={post.image} alt={post.title} />
+            </div>
+            <div class="post-content">
+              <span class="post-category">{post.category}</span>
+              <h3 class="post-title">
+                <a href={`/blog/${post.id}`}>{post.title}</a>
+              </h3>
+              <p class="post-excerpt">{post.excerpt}</p>
+              <div class="post-footer">
+                <span class="post-date">{post.date}</span>
+                <span class="post-author">By {post.author}</span>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    {
+      totalPages > 1 && (
+        <div class="pagination">
+          {currentPage > 1 && (
+            <a
+              href={`?page=${currentPage - 1}${searchQuery ? `&search=${searchQuery}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+              class="btn-pagination"
+            >
+              &larr; หน้าก่อนหน้า
+            </a>
+          )}
+          <span class="page-info">
+            หน้า {currentPage} จาก {totalPages}
+          </span>
+          {currentPage < totalPages && (
+            <a
+              href={`?page=${currentPage + 1}${searchQuery ? `&search=${searchQuery}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+              class="btn-pagination"
+            >
+              หน้าถัดไป &rarr;
+            </a>
+          )}
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<style>
+  .blog-index {
+    padding: 6rem 0;
+  }
+  .page-header {
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+  }
+  .page-header p {
+    color: var(--color-text-muted);
+    font-size: 1.2rem;
+  }
+
+  .search-filter-container {
+    margin-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+  .search-form {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+  }
+  .search-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-right: 0.5rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .search-input-wrapper:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(246, 48, 73, 0.1);
+  }
+  .search-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    font-size: 1rem;
+  }
+  .btn-search-icon {
+    background: var(--color-primary);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-search-icon:hover {
+    background: var(--color-secondary);
+    transform: scale(1.05);
+  }
+
+  .category-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    /* Hide scrollbar but keep functionality */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .category-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    min-width: max-content;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .category-filters {
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+    }
+  }
+  .filter-tag {
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    transition: all 0.3s ease;
+  }
+  .filter-tag:hover,
+  .filter-tag.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+  .filter-tag.active {
+    box-shadow: 0 5px 15px rgba(246, 48, 73, 0.3);
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+  .post-card {
+    overflow: hidden;
+    transition:
+      transform 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .post-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+  }
+  .post-image {
+    height: 200px;
+    overflow: hidden;
+  }
+  .post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .post-card:hover .post-image img {
+    transform: scale(1.05);
+  }
+  .post-content {
+    padding: 1.5rem;
+  }
+  .post-category {
+    display: inline-block;
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .post-title a {
+    color: white;
+  }
+  .post-excerpt {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .post-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  .pagination {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+  .btn-pagination {
+    padding: 0.8rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.8rem;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .btn-pagination:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+  .page-info {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+</style>
