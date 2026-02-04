@@ -131,24 +131,30 @@ const posts = rawPosts.map((post) => ({
 
     <div class="post-grid">
       {
-        posts.map((post) => (
-          <article class="post-card glass">
-            <div class="post-image">
-              <img src={post.image} alt={post.title} />
-            </div>
-            <div class="post-content">
-              <span class="post-category">{post.category}</span>
-              <h3 class="post-title">
-                <a href={`/blog/${post.id}`}>{post.title}</a>
-              </h3>
-              <p class="post-excerpt">{post.excerpt}</p>
-              <div class="post-footer">
-                <span class="post-date">{post.date}</span>
-                <span class="post-author">By {post.author}</span>
+        posts.length > 0 ? (
+          posts.map((post) => (
+            <article class="post-card glass">
+              <div class="post-image">
+                <img src={post.image} alt={post.title} />
               </div>
-            </div>
-          </article>
-        ))
+              <div class="post-content">
+                <span class="post-category">{post.category}</span>
+                <h3 class="post-title">
+                  <a href={`/blog/${post.id}`}>{post.title}</a>
+                </h3>
+                <p class="post-excerpt">{post.excerpt}</p>
+                <div class="post-footer">
+                  <span class="post-date">{post.date}</span>
+                  <span class="post-author">By {post.author}</span>
+                </div>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div class="empty-state glass">
+            <p>ยังไม่มีอะไรอัพเดตเลย รอก่อนน้าา</p>
+          </div>
+        )
       }
     </div>
 
@@ -301,6 +307,15 @@ const posts = rawPosts.map((post) => ({
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 2rem;
+  }
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 6rem 2rem;
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
   }
   .post-card {
     overflow: hidden;

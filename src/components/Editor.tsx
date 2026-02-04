@@ -3,7 +3,12 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
-import { useState } from 'react'
+import { TextStyle } from '@tiptap/extension-text-style'
+import { Color } from '@tiptap/extension-color'
+import Highlight from '@tiptap/extension-highlight'
+import { useState, useEffect } from 'react'
+
+const STORAGE_KEY = 'shiori_blog_draft'
 
 export default function Editor() {
   const [title, setTitle] = useState('')
@@ -11,20 +16,65 @@ export default function Editor() {
   const [excerpt, setExcerpt] = useState('')
   const [category, setCategory] = useState('Journal')
   const [imageUrl, setImageUrl] = useState('')
+  const [author, setAuthor] = useState('')
   const [status, setStatus] = useState('')
+  const [slugAvailable, setSlugAvailable] = useState(true)
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       Link.configure({ openOnClick: false }),
       Image,
+      TextStyle,
+      Color,
+      Highlight.configure({ multicolor: true }),
       Placeholder.configure({
         placeholder: 'เริ่มเขียนบันทึกของคุณที่นี่...',
       }),
     ],
     content: '',
     immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      saveToStorage({ content: editor.getHTML() })
+    }
   })
+
+  // Load draft on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved)
+        if (draft.title) setTitle(draft.title)
+        if (draft.slug) setSlug(draft.slug)
+        if (draft.excerpt) setExcerpt(draft.excerpt)
+        if (draft.category) setCategory(draft.category)
+        if (draft.imageUrl) setImageUrl(draft.imageUrl)
+        if (draft.author) setAuthor(draft.author)
+        if (draft.content && editor) {
+          editor.commands.setContent(draft.content)
+        }
+        setStatus('กู้คืนฉบับร่างเรียบร้อย ✨')
+      } catch (e) {
+        console.error('Failed to load draft:', e)
+      }
+    }
+  }, [editor])
+
+  const saveToStorage = (updates: any) => {
+    const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    const next = {
+      title, slug, excerpt, category, imageUrl, author,
+      content: editor?.getHTML() || '',
+      ...updates
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+  }
+
+  // Auto-save field changes
+  useEffect(() => {
+    saveToStorage({})
+  }, [title, slug, excerpt, category, imageUrl, author])
 
   const openUploadWidget = () => {
     // @ts-ignore
@@ -64,8 +114,37 @@ export default function Editor() {
     widget.open();
   }
 
+  // Check slug availability
+  useEffect(() => {
+    if (!slug) {
+      setSlugAvailable(true);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/check-slug?slug=${slug}`);
+        const data = await res.json();
+        setSlugAvailable(!data.exists);
+        if (data.exists) {
+          setStatus('❌ URL นี้ถูกใช้ไปแล้วนะจ๊ะ ลองเปลี่ยนใหม่ดู');
+        } else {
+          setStatus('');
+        }
+      } catch (e) {
+        console.error('Slug check failed', e);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [slug]);
+
   const savePost = async () => {
     if (!editor) return
+    if (!slugAvailable) {
+      setStatus('❌ กรุณาเปลี่ยน slug-url ก่อนจ้า เพราะมันซ้ำ!');
+      return;
+    }
     setStatus('กำลังบันทึก...')
 
     const content = editor.getHTML()
@@ -78,17 +157,21 @@ export default function Editor() {
         excerpt,
         content,
         category,
+        author,
         image_url: imageUrl,
       }),
     })
 
+    const result = await response.json();
+
     if (response.ok) {
+      localStorage.removeItem(STORAGE_KEY)
       setStatus('บันทึกเรียบร้อย! กำลังพาไปดูหน้าโพสต์...')
       setTimeout(() => {
         window.location.href = `/blog/${slug}`
       }, 1000)
     } else {
-      setStatus('เกิดข้อผิดพลาดในการบันทึก')
+      setStatus(`❌ บันทึกไม่สำเร็จ: ${result.error || 'เกิดข้อผิดพลาดบางอย่าง'}`)
     }
   }
 
@@ -112,16 +195,30 @@ export default function Editor() {
           placeholder="slug-url" 
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
-          className="admin-input"
+          className={`admin-input ${!slugAvailable ? 'input-error' : ''}`}
         />
-        <input 
-          type="text" 
-          placeholder="หมวดหมู่ (เช่น Review, Log)" 
+        <select 
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          className="admin-input admin-select"
+        >
+          <option value="Journal">📒 Journal</option>
+          <option value="Life">🌱 Life</option>
+          <option value="Review">⭐ Review</option>
+          <option value="Travel">✈️ Travel</option>
+          <option value="Food">🍱 Food</option>
+          <option value="Thought">💭 Thought</option>
+          <option value="Tech">💻 Tech</option>
+          <option value="Work">💼 Work</option>
+        </select>
+        <input 
+          type="text" 
+          placeholder="ชื่อผู้โพสต์" 
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
           className="admin-input"
         />
-        <div className="input-group">
+        <div className="input-group full-width">
           <input 
             type="text" 
             placeholder="Link รูปหน้าปก" 
@@ -144,7 +241,38 @@ export default function Editor() {
         <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>B</button>
         <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>I</button>
         <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}>H2</button>
-        <button onClick={() => editor.chain().focus().toggleBulletList().run()} className={editor.isActive('bulletList') ? 'is-active' : ''}>List</button>
+        <button title="Bullet List" onClick={() => editor.chain().focus().toggleBulletList().run()} className={editor.isActive('bulletList') ? 'is-active' : ''}>• List</button>
+        <button title="Ordered List" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={editor.isActive('orderedList') ? 'is-active' : ''}>1. List</button>
+        
+        <div className="toolbar-separator"></div>
+        
+        <button 
+          onClick={() => editor.chain().focus().setColor('#f63049').run()} 
+          className={editor.isActive('textStyle', { color: '#f63049' }) ? 'is-active' : ''}
+          style={{ color: '#f63049' }}
+        >A</button>
+        <button 
+          onClick={() => editor.chain().focus().setColor('#4facfe').run()} 
+          className={editor.isActive('textStyle', { color: '#4facfe' }) ? 'is-active' : ''}
+          style={{ color: '#4facfe' }}
+        >A</button>
+        <button 
+          onClick={() => editor.chain().focus().unsetColor().run()}
+        >⌫</button>
+
+        <div className="toolbar-separator"></div>
+
+        <button 
+          onClick={() => editor.chain().focus().toggleHighlight({ color: '#f63049' }).run()} 
+          className={editor.isActive('highlight', { color: '#f63049' }) ? 'is-active' : ''}
+          style={{ background: '#f63049', color: 'white' }}
+        >H</button>
+        <button 
+          onClick={() => editor.chain().focus().toggleHighlight({ color: '#fbbf24' }).run()} 
+          className={editor.isActive('highlight', { color: '#fbbf24' }) ? 'is-active' : ''}
+          style={{ background: '#fbbf24', color: 'black' }}
+        >H</button>
+
         <button onClick={openEditorImageUpload} className="btn-toolbar-upload">
           📷 เพิ่มรูปประกอบ
         </button>

@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
       content: data.content,
       category: data.category,
       imageUrl: data.image_url,
-      author: 'Shiori'
+      author: data.author
     });
 
     return new Response(JSON.stringify({ message: 'Success' }), { status: 200 });

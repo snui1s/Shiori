@@ -40,7 +40,7 @@
   background: var(--color-primary) !important;
   color: white !important;
 }
-.admin-input, .admin-textarea {
+.admin-input, .admin-textarea, .admin-select {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
@@ -48,6 +48,15 @@
   border-radius: 0.5rem;
   outline: none;
   width: 100%;
+  transition: all 0.3s ease;
+}
+.admin-input.input-error {
+  border-color: #f63049;
+  box-shadow: 0 0 10px rgba(246, 48, 73, 0.2);
+}
+.admin-select option {
+  background: #1a1a1a;
+  color: white;
 }
 .admin-textarea {
   min-height: 80px;
@@ -73,6 +82,13 @@
 }
 .toolbar button:hover {
   background: rgba(255,255,255,0.1);
+}
+.toolbar-separator {
+  width: 1px;
+  height: 24px;
+  background: rgba(255,255,255,0.1);
+  margin: 0 0.5rem;
+  align-self: center;
 }
 .toolbar button.is-active {
   background: #f63049; /* var(--color-primary) */
