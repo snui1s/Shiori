@@ -10,7 +10,7 @@ This project is built to be a **ready-to-use template**. You can clone it, chang
 
 - **Visual Identity**: Animated Japanese Lantern icon (Chouchin) that swings and glows on hover.
 - **Dynamic Now Section**: A randomized status section (listening, reading, mood) that updates on every page load.
-- **Premium Admin Dashboard**: A secure management interface for content creation (`/admin`).
+- **Admin Dashboard**: A secure management interface for content creation (`/admin`).
   - **Tiptap Editor**: A rich text editor for seamless writing.
   - **Direct Cloudinary Upload**: Integrated image upload widget.
 - **Astro DB Support**: Powered by Astro's fully integrated SQL database.
@@ -25,7 +25,7 @@ This project is built to be a **ready-to-use template**. You can clone it, chang
 - **Database**: Astro DB (SQLite / Astro Studio)
 - **Editor**: Tiptap (Headless Rich Text Editor)
 - **Image Hosting**: Cloudinary
-- **UI and Styling**: Vanilla CSS (Glassmorphism Design)
+- **UI and Styling**: Vanilla CSS
 
 ---
 
