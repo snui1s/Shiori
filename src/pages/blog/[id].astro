@@ -51,7 +51,11 @@ const post = {
     </header>
 
     <div class="post-hero-image glass">
-      <img src={post.image} alt={post.title} />
+      <img
+        src={post.image}
+        alt={post.title}
+        onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...';"
+      />
     </div>
 
     <div class="post-content glass">
@@ -60,19 +64,39 @@ const post = {
     </div>
 
     <footer class="post-footer">
-      <a href="/" class="btn btn-outline">&larr; Back to Home</a>
+      <a href="/" class="btn-back">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        กลับหน้าหลัก
+      </a>
     </footer>
   </article>
 </Layout>
 
 <style>
   .post-detail {
-    padding: 4rem 0;
-    max-width: 800px;
+    padding: 4rem 1rem;
+    max-width: 1000px;
+    margin: 0 auto;
   }
   .post-header {
     text-align: center;
     margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .post-category {
     color: var(--color-primary);
@@ -96,8 +120,9 @@ const post = {
 
   .post-hero-image {
     width: 100%;
+    max-width: 800px;
     height: 450px;
-    margin-bottom: 3rem;
+    margin: 0 auto 3rem;
     overflow: hidden;
     border-radius: 2rem;
   }
@@ -108,10 +133,11 @@ const post = {
   }
 
   .post-content {
-    padding: 3rem;
-    font-size: 1.1rem;
+    padding: 4rem;
+    font-size: 1.15rem;
     line-height: 1.8;
     color: #e2e8f0;
+    width: 100%;
   }
   .lead {
     font-size: 1.4rem;
@@ -137,9 +163,36 @@ const post = {
   }
 
   .post-footer {
-    margin-top: 4rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 2rem;
+    margin-top: 6rem;
+    padding-top: 4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: center;
+  }
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 2.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3rem;
+    color: white;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    text-decoration: none;
+  }
+  .btn-back:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(246, 48, 73, 0.3);
+  }
+  .btn-back svg {
+    transition: transform 0.3s ease;
+  }
+  .btn-back:hover svg {
+    transform: translateX(-5px);
   }
 
   .h-gradient {
@@ -147,6 +200,35 @@ const post = {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  @media (max-width: 768px) {
+    .post-detail {
+      padding: 2rem 0.5rem;
+    }
+    .post-title {
+      font-size: 2.2rem;
+    }
+    .post-hero-image {
+      height: 250px;
+      border-radius: 1rem;
+    }
+    .post-content {
+      padding: 1.5rem;
+      font-size: 1.05rem;
+    }
+    .lead {
+      font-size: 1.15rem;
+    }
+    .rich-text-content :global(h2) {
+      font-size: 1.6rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .post-title {
+      font-size: 1.8rem;
+    }
   }
 
   /* Rich Text Styles */

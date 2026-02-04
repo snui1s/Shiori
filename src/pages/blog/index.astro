@@ -135,7 +135,11 @@ const posts = rawPosts.map((post) => ({
           posts.map((post) => (
             <article class="post-card glass">
               <div class="post-image">
-                <img src={post.image} alt={post.title} />
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/F63049?text=Image+Gone+Fishing...';"
+                />
               </div>
               <div class="post-content">
                 <span class="post-category">{post.category}</span>
@@ -238,6 +242,7 @@ const posts = rawPosts.map((post) => ({
     color: white;
     outline: none;
     font-size: 1rem;
+    font-family: inherit;
   }
   .btn-search-icon {
     background: var(--color-primary);
@@ -279,9 +284,38 @@ const posts = rawPosts.map((post) => ({
   }
 
   @media (max-width: 768px) {
+    .blog-index {
+      padding: 3rem 1rem;
+    }
+    .page-header h1 {
+      font-size: 2.2rem;
+    }
+    .page-header p {
+      font-size: 1rem;
+    }
+    .search-filter-container {
+      margin-bottom: 2rem;
+    }
     .category-filters {
       justify-content: flex-start;
       flex-wrap: nowrap;
+    }
+    .btn-search-icon {
+      display: none;
+    }
+    .search-input-wrapper {
+      padding-right: 0;
+    }
+    .post-grid {
+      grid-template-columns: 1fr;
+    }
+    .pagination {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .btn-pagination {
+      width: 100%;
+      text-align: center;
     }
   }
   .filter-tag {

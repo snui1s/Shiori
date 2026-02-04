@@ -121,7 +121,11 @@ const nowStatus = {
             posts.map((post) => (
               <article class="post-card glass">
                 <div class="post-image">
-                  <img src={post.image} alt={post.title} />
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...';"
+                  />
                 </div>
                 <div class="post-content">
                   <span class="post-category">{post.category}</span>
@@ -428,8 +432,47 @@ const nowStatus = {
     }
 
     @media (max-width: 768px) {
+      .hero {
+        padding: 4rem 1rem 3rem;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+      .post-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+      }
+      .now-section {
+        margin: 2rem 0 4rem;
+        padding: 0 1rem;
+      }
+      .now-card {
+        padding: 2rem 1.5rem;
+      }
       .now-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .now-header h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      .section-title {
+        font-size: 1.7rem;
       }
     }
   </style>
