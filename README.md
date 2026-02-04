@@ -1,6 +1,6 @@
 # 🏮 Shiori - Starter Template for Personal Blogs
 
-Shiori is a high-performance, premium personal blog template built with Astro. It's designed for creators who want a minimalist, "Time Capsule" style blog that is easy to customize and deploy.
+Shiori is a high-performance, premium personal blog template built with Astro. It's designed for creators who want a minimalist, Time Capsule style blog that is easy to customize and deploy.
 
 This project is built to be a **ready-to-use template**. You can clone it, change a few settings, and have your own professional blog live in minutes.
 
@@ -25,7 +25,7 @@ This project is built to be a **ready-to-use template**. You can clone it, chang
 - **Database**: Astro DB (SQLite / Astro Studio)
 - **Editor**: Tiptap (Headless Rich Text Editor)
 - **Image Hosting**: Cloudinary
-- **UI and Styling**: Vanilla CSS (Premium Glassmorphism Design)
+- **UI and Styling**: Vanilla CSS (Glassmorphism Design)
 
 ---
 

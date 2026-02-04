@@ -6,12 +6,12 @@ import node from '@astrojs/node';
 
 import db from '@astrojs/db';
 
+import vercel from '@astrojs/vercel';
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [react(), db()],
   output: 'server',
 
-  adapter: node({
-    mode: 'standalone'
-  })
+  adapter: vercel()
 });
