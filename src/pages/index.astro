@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { db, Post, desc } from "astro:db";
+import { getOptimizedImageUrl } from "../lib/images";
 
 const rawPosts = await db
   .select()
@@ -8,24 +9,27 @@ const rawPosts = await db
   .orderBy(desc(Post.createdAt))
   .limit(6);
 
-const posts = rawPosts.map((post) => ({
-  id: post.slug,
-  title: post.title,
-  excerpt: post.excerpt,
-  date:
-    new Date(post.createdAt).toLocaleString("th-TH", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }) + " น.",
-  category: post.category,
-  image:
+const posts = rawPosts.map((post) => {
+  const imageUrl =
     post.imageUrl ||
-    "https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...",
-  author: post.author,
-}));
+    "https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...";
+  return {
+    id: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    date:
+      new Date(post.createdAt).toLocaleString("th-TH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " น.",
+    category: post.category,
+    image: getOptimizedImageUrl(imageUrl, 600), // Optimize for grid view
+    author: post.author,
+  };
+});
 
 // Random "Now" data
 const listeningOptions = [
@@ -385,13 +389,11 @@ const nowStatus = {
     }
     @keyframes pulse {
       0% {
-        width: 100%;
-        height: 100%;
+        transform: translate(-50%, -50%) scale(1);
         opacity: 0.6;
       }
       100% {
-        width: 300%;
-        height: 300%;
+        transform: translate(-50%, -50%) scale(3);
         opacity: 0;
       }
     }
