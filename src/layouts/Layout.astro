@@ -12,7 +12,7 @@ interface Props {
 const {
   title,
   description = "栞 Shiori - บันทึกความทรงจำและเรื่องราวที่น่าสนใจรอบตัว",
-  image = "/og-image.png", // Default OG image
+  image = "/image.png", // Default OG image
   canonicalURL = Astro.url.href,
   type = "website",
 } = Astro.props;
@@ -71,6 +71,20 @@ const userAvatar =
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Google Analytics -->
+    <script
+      is:inline
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-7HMDPM75DV"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-7HMDPM75DV");
+    </script>
   </head>
   <body>
     <Toaster
