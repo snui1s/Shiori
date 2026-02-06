@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { db, Post, eq } from "astro:db";
 import { getSession } from "auth-astro/server";
+import { getOptimizedImageUrl } from "../../lib/images";
 import Comments from "../../components/Comments";
 
 const session = await getSession(Astro.request);
@@ -19,6 +20,10 @@ if (!entry) {
   return Astro.redirect("/404");
 }
 
+const entryImageUrl =
+  entry.imageUrl ||
+  "https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...";
+
 const post = {
   title: entry.title,
   excerpt: entry.excerpt,
@@ -32,9 +37,8 @@ const post = {
       minute: "2-digit",
     }) + " น.",
   category: entry.category,
-  image:
-    entry.imageUrl ||
-    "https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...",
+  image: entryImageUrl, // Keep original for social previews
+  optimizedImage: getOptimizedImageUrl(entryImageUrl, 1200), // High res for hero
   author: entry.author,
 };
 
@@ -96,11 +100,12 @@ const jsonLd = {
 
     <div class="post-hero-image glass">
       <img
-        src={post.image}
+        src={post.optimizedImage}
         alt={post.title}
         width="1200"
         height="600"
         loading="eager"
+        fetchpriority="high"
         class="hero-img"
         onerror="this.onerror=null; this.src='https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...';"
       />

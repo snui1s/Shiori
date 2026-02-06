@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { validateCommentContent } from '../lib/comments';
+import { getOptimizedImageUrl } from '../lib/images';
 import type { Comment } from '../types';
+
 import '../styles/components/Comments.css';
 
 interface CommentsProps {
@@ -37,7 +39,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   <div className={`comment-container ${isReply ? 'comment-reply' : ''}`}>
     <div className="comment-item glass">
       <img 
-        src={comment.user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.name)}&background=f63049&color=fff`} 
+        src={getOptimizedImageUrl(comment.user.image, 48) || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.name)}&background=f63049&color=fff`} 
         alt={comment.user.name} 
         className="comment-avatar" 
         loading="lazy"
