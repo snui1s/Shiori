@@ -1,0 +1,190 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="404 - you lost | Shiori 栞">
+  <div class="container error-page">
+    <div class="error-content glass">
+      <div class="error-icon">
+        <div class="lantern-404">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="ribs"></div>
+            <div class="ribs"></div>
+            <div class="lantern-text">404</div>
+          </div>
+          <div class="lantern-bottom"></div>
+        </div>
+      </div>
+
+      <h1 class="h-gradient">โอ๊ะ! หลงทางซะแล้ว</h1>
+      <p class="error-desc">
+        ดูเหมือนสิ่งที่คุณตามหาจะไม่ได้อยู่ที่นี่
+        บางทีมันอาจจะยังไม่ถูกเขียนขึ้น หรือถูกผมลบไปแล้ว...
+      </p>
+
+      <div class="error-actions">
+        <a href="/" class="btn-home">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+            ></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg
+          >
+          กลับหน้าหลัก
+        </a>
+        <a href="/blog" class="btn-outline">ไปดูบันทึกอื่นๆ</a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .error-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .error-content {
+    max-width: 600px;
+    width: 100%;
+    padding: 4rem 3rem;
+    text-align: center;
+    border-radius: 2.5rem;
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .error-icon {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Custom 404 Lantern */
+  .lantern-404 {
+    width: 80px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    filter: drop-shadow(0 0 20px rgba(246, 48, 73, 0.4));
+    animation: swing 3s ease-in-out infinite alternate;
+  }
+  .lantern-top,
+  .lantern-bottom {
+    width: 40px;
+    height: 10px;
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+  .lantern-body {
+    flex: 1;
+    width: 70px;
+    background: linear-gradient(to right, #f63049, #cc233b, #f63049);
+    border-radius: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+  .ribs {
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+  .lantern-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(0, 0, 0, 0.4);
+    font-weight: 800;
+    font-size: 1.2rem;
+    pointer-events: none;
+  }
+
+  @keyframes swing {
+    from {
+      transform: rotate(-10deg);
+    }
+    to {
+      transform: rotate(10deg);
+    }
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .error-desc {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+  .btn-home {
+    background: var(--color-primary);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s;
+    box-shadow: 0 10px 20px rgba(246, 48, 73, 0.3);
+  }
+  .btn-home:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(246, 48, 73, 0.5);
+  }
+  .btn-outline {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: white;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .error-actions {
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+  }
+</style>

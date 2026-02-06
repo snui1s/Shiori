@@ -1,0 +1,362 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SignIn } from "auth-astro/components";
+import { getSession } from "auth-astro/server";
+
+const session = await getSession(Astro.request);
+if (session) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Login">
+  <div class="login-container">
+    <div class="login-card">
+      <h1 class="login-title">ยินดีต้อนรับกลับมา</h1>
+      <p class="login-subtitle">กรุณากรอกข้อมูลเพื่อเข้าสู่ระบบ</p>
+
+      <form class="login-form">
+        <div class="input-group">
+          <label for="email">อีเมล</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="กรอกอีเมลของคุณ"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="password">รหัสผ่าน</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="กรอกรหัสผ่าน"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
+      </form>
+
+      <div class="divider">
+        <span>หรือดำเนินการต่อด้วย</span>
+      </div>
+
+      <SignIn
+        provider="google"
+        class="btn-google"
+        options={{ callbackUrl: "/" }}
+      >
+        <svg
+          class="google-icon"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            fill="#4285F4"></path>
+          <path
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            fill="#34A853"></path>
+          <path
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            fill="#FBBC05"></path>
+          <path
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            fill="#EA4335"></path>
+        </svg>
+        <span>Google</span>
+      </SignIn>
+
+      <p class="signup-link">
+        ยังไม่มีบัญชี? <a href="/signup">ลงทะเบียน</a>
+      </p>
+    </div>
+  </div>
+  <script>
+    import { signIn } from "auth-astro/client";
+    import toast from "react-hot-toast";
+
+    const form = document.querySelector(".login-form") as HTMLFormElement;
+
+    // Check for error in URL (e.g. from OAuth redirect failure)
+    const urlParams = new URL(window.location.href).searchParams;
+    const error = urlParams.get("error");
+    if (error) {
+      if (error === "CredentialsSignin") {
+        toast.error("อีเมลหรือรหัสผ่านไม่ถูกต้อง", {
+          position: "top-center",
+        });
+      } else {
+        toast.error("เกิดข้อผิดพลาดในการเข้าสู่ระบบ", {
+          position: "top-center",
+        });
+      }
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const email = formData.get("email");
+      const password = formData.get("password");
+      const submitBtn = form.querySelector(
+        'button[type="submit"]',
+      ) as HTMLButtonElement;
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "กำลังเข้าสู่ระบบ...";
+
+        console.log("Attempting login for:", email);
+
+        const res = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        } as any);
+
+        console.log("SignIn raw response:", res);
+
+        if (!res) {
+          toast.error("ไม่ได้รับตอบสนองจากเซิร์ฟเวอร์", {
+            position: "top-center",
+          });
+          submitBtn.disabled = false;
+          submitBtn.textContent = "เข้าสู่ระบบ";
+          return;
+        }
+
+        if (res.ok) {
+          console.log("Login OK! Toasting and redirecting...");
+          toast.success("เข้าสู่ระบบสำเร็จ!", {
+            position: "top-center",
+            duration: 2000,
+          });
+
+          setTimeout(() => {
+            console.log("Redirecting to home...");
+            window.location.assign("/");
+          }, 500);
+          return;
+        }
+
+        let data;
+        try {
+          data = await res.json();
+          console.log("SignIn error data:", data);
+        } catch (e) {
+          data = {};
+        }
+
+        if (data?.url && data.url.includes("error=")) {
+          toast.error("อีเมลหรือรหัสผ่านไม่ถูกต้อง", {
+            position: "top-center",
+          });
+        } else {
+          toast.error("เกิดข้อผิดพลาดในการเข้าสู่ระบบ", {
+            position: "top-center",
+          });
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "เข้าสู่ระบบ";
+      } catch (error) {
+        console.error("Login Error:", error);
+        toast.error("เกิดข้อผิดพลาดในการเชื่อมต่อ", { position: "top-center" });
+        submitBtn.disabled = false;
+        submitBtn.textContent = "เข้าสู่ระบบ";
+      }
+    });
+  </script>
+</Layout>
+
+<style>
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 520px;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: slideUp 0.6s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .login-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+
+  .login-subtitle {
+    color: var(--color-text-muted);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin-left: 4px;
+  }
+
+  .input-group input {
+    padding: 0.875rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: var(--font-main);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    color: var(--color-text);
+  }
+
+  .input-group input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(246, 48, 73, 0.1);
+  }
+
+  .input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .btn-login {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 12px rgba(246, 48, 73, 0.3);
+  }
+
+  .btn-login:hover {
+    background: var(--color-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(246, 48, 73, 0.4);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 2rem 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .divider span {
+    padding: 0 12px;
+  }
+
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.875rem;
+    background: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-google:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .google-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .signup-link {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+  }
+
+  .signup-link a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .signup-link a:hover {
+    color: var(--color-secondary);
+    text-decoration: underline;
+  }
+</style>

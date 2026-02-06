@@ -12,15 +12,18 @@ const posts = rawPosts.map((post) => ({
   id: post.slug,
   title: post.title,
   excerpt: post.excerpt,
-  date: new Date(post.createdAt).toLocaleDateString("th-TH", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }),
+  date:
+    new Date(post.createdAt).toLocaleString("th-TH", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }) + " น.",
   category: post.category,
   image:
     post.imageUrl ||
-    "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e",
+    "https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...",
   author: post.author,
 }));
 
@@ -92,7 +95,19 @@ const nowStatus = {
 };
 ---
 
-<Layout title="Shiori - A blog">
+<script is:inline>
+  function handleImageError(img) {
+    img.onerror = null;
+    img.src =
+      "https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...";
+  }
+</script>
+
+<Layout
+  title="Sharing Life & Tech"
+  description="ยินดีต้อนรับสู่ Shiori 栞 - บันทึกเรื่องราวชีวิต ฮาวทู รีวิว และเทคโนโลยีมั่วๆ ที่น่าสนใจ"
+  type="website"
+>
   <section class="hero">
     <div class="container hero-content">
       <h1 class="hero-title">
@@ -105,7 +120,6 @@ const nowStatus = {
         <a href="/blog" class="btn btn-primary">อ่านบันทึกทั้งหมด</a>
       </div>
     </div>
-    <div class="hero-bg-accent"></div>
   </section>
 
   <section id="featured" class="featured-section">
@@ -124,7 +138,11 @@ const nowStatus = {
                   <img
                     src={post.image}
                     alt={post.title}
-                    onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...';"
+                    width="600"
+                    height="400"
+                    loading="lazy"
+                    class="blog-card-img"
+                    onerror="this.onerror=null; this.src='https://placehold.co/600x400/1a1a1a/F63049?text=Image+is+Sleeping...';"
                   />
                 </div>
                 <div class="post-content">
@@ -208,21 +226,6 @@ const nowStatus = {
       display: flex;
       gap: 1.5rem;
       justify-content: center;
-    }
-    .hero-bg-accent {
-      position: absolute;
-      top: -10%;
-      right: -10%;
-      width: 40%;
-      height: 60%;
-      background: radial-gradient(
-        circle,
-        var(--color-accent) 0%,
-        transparent 70%
-      );
-      opacity: 0.2;
-      filter: blur(60px);
-      z-index: 1;
     }
 
     .featured-section {

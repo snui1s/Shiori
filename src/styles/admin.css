@@ -60,7 +60,9 @@
 }
 .admin-textarea {
   min-height: 80px;
+  max-height: 120px;
   margin-bottom: 1.5rem;
+  resize: none;
 }
 .toolbar {
   margin-bottom: 1rem;
@@ -157,5 +159,31 @@
   .status-msg {
     margin-left: 0;
     text-align: center;
+  }
+}
+
+.category-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.custom-category-input {
+  background: rgba(246, 48, 73, 0.05);
+  border-color: rgba(246, 48, 73, 0.3);
+}
+
+.animate-in {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

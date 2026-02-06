@@ -1,14 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { db, Post, eq } from "astro:db";
+import { getSession } from "auth-astro/server";
+import Comments from "../../components/Comments";
 
-export async function getStaticPaths() {
-  const posts = await db.select().from(Post);
+const session = await getSession(Astro.request);
 
-  return posts.map((post) => ({
-    params: { id: post.slug },
-  }));
-}
+export const prerender = false;
 
 const { id } = Astro.params;
 
@@ -25,36 +23,86 @@ const post = {
   title: entry.title,
   excerpt: entry.excerpt,
   content: entry.content || "",
-  date: new Date(entry.createdAt).toLocaleDateString("th-TH", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }),
+  date:
+    new Date(entry.createdAt).toLocaleString("th-TH", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }) + " น.",
   category: entry.category,
   image:
     entry.imageUrl ||
-    "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e",
+    "https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...",
   author: entry.author,
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.excerpt,
+  image: post.image,
+  author: {
+    "@type": "Person",
+    name: post.author,
+  },
+  datePublished: entry.createdAt.toISOString(),
+  url: Astro.url.href,
 };
 ---
 
-<Layout title={`${post.title} | Shiori 栞`} description={post.excerpt || ""}>
+<Layout
+  title={post.title}
+  description={post.excerpt || ""}
+  image={post.image}
+  type="article"
+>
+  <script is:inline>
+    function handleDetailImageError(img) {
+      img.onerror = null;
+      img.src =
+        "https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...";
+    }
+  </script>
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd)}
+  />
   <article class="post-detail container">
     <header class="post-header">
       <span class="post-category">{post.category}</span>
       <h1 class="post-title h-gradient">{post.title}</h1>
       <div class="post-meta">
-        <span>{post.date}</span>
-        <span class="dot">•</span>
-        <span>By {post.author}</span>
+        <div class="meta-left">
+          <span>{post.date}</span>
+          <span class="dot">•</span>
+          <span>By {post.author}</span>
+        </div>
       </div>
     </header>
+
+    <style>
+      .post-meta {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1.5rem;
+        color: var(--color-text-muted);
+      }
+    </style>
 
     <div class="post-hero-image glass">
       <img
         src={post.image}
         alt={post.title}
-        onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...';"
+        width="1200"
+        height="600"
+        loading="eager"
+        class="hero-img"
+        onerror="this.onerror=null; this.src='https://placehold.co/1200x600/1a1a1a/F63049?text=Image+Lost+in+Translation...';"
       />
     </div>
 
@@ -62,6 +110,8 @@ const post = {
       <p class="lead">{post.excerpt}</p>
       <div class="rich-text-content" set:html={post.content} />
     </div>
+
+    <Comments client:load postId={entry.id} session={session} />
 
     <footer class="post-footer">
       <a href="/" class="btn-back">

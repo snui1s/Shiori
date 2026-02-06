@@ -7,18 +7,23 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import Highlight from '@tiptap/extension-highlight'
 import { useState, useEffect } from 'react'
+import { STORAGE_KEY, CATEGORIES } from '../lib/constants'
 
-const STORAGE_KEY = 'shiori_blog_draft'
-
-export default function Editor() {
+export default function Editor({ initialSlug }: { initialSlug?: string }) {
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
   const [excerpt, setExcerpt] = useState('')
-  const [category, setCategory] = useState('Journal')
+  const [category, setCategory] = useState<string>('Journal')
   const [imageUrl, setImageUrl] = useState('')
   const [author, setAuthor] = useState('')
   const [status, setStatus] = useState('')
   const [slugAvailable, setSlugAvailable] = useState(true)
+  const [customCategory, setCustomCategory] = useState('')
+  const [isCustomCategory, setIsCustomCategory] = useState(false)
+  const isEditing = !!initialSlug
+
+  // Use CATEGORIES from constants, but cast to mutable array for local usage if needed, or just iterate.
+  // We can just use CATEGORIES directly.
 
   const editor = useEditor({
     extensions: [
@@ -39,8 +44,41 @@ export default function Editor() {
     }
   })
 
-  // Load draft on mount
+  // Load draft or existing post
   useEffect(() => {
+    if (isEditing) {
+      const fetchPost = async () => {
+        setStatus('กำลังดึงข้อมูลบทความ...')
+        try {
+          const res = await fetch(`/api/posts/${initialSlug}`);
+          if (res.ok) {
+            const data = await res.json();
+            setTitle(data.title);
+            setSlug(data.slug);
+            setExcerpt(data.excerpt || '');
+            if (CATEGORIES.includes(data.category as any)) {
+              setCategory(data.category);
+              setIsCustomCategory(false);
+            } else {
+              setCategory('Other');
+              setIsCustomCategory(true);
+              setCustomCategory(data.category);
+            }
+            setImageUrl(data.imageUrl || '');
+            setAuthor(data.author || '');
+            if (editor) {
+              editor.commands.setContent(data.content || '');
+            }
+            setStatus('ดึงข้อมูลสำเร็จ ✨');
+          }
+        } catch (e) {
+          setStatus('ไม่สามารถดึงข้อมูลได้');
+        }
+      };
+      fetchPost();
+      return;
+    }
+
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
       try {
@@ -62,7 +100,7 @@ export default function Editor() {
   }, [editor])
 
   const saveToStorage = (updates: any) => {
-    const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    // const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
     const next = {
       title, slug, excerpt, category, imageUrl, author,
       content: editor?.getHTML() || '',
@@ -116,7 +154,7 @@ export default function Editor() {
 
   // Check slug availability
   useEffect(() => {
-    if (!slug) {
+    if (!slug || (isEditing && slug === initialSlug)) {
       setSlugAvailable(true);
       return;
     }
@@ -148,15 +186,17 @@ export default function Editor() {
     setStatus('กำลังบันทึก...')
 
     const content = editor.getHTML()
+    const url = isEditing ? `/api/posts/${initialSlug}` : '/api/posts';
+    const method = isEditing ? 'PATCH' : 'POST';
     
-    const response = await fetch('/api/posts', {
-      method: 'POST',
+    const response = await fetch(url, {
+      method: method,
       body: JSON.stringify({
         title,
         slug,
         excerpt,
         content,
-        category,
+        category: isCustomCategory ? customCategory : category,
         author,
         image_url: imageUrl,
       }),
@@ -165,7 +205,7 @@ export default function Editor() {
     const result = await response.json();
 
     if (response.ok) {
-      localStorage.removeItem(STORAGE_KEY)
+      if (!isEditing) localStorage.removeItem(STORAGE_KEY)
       setStatus('บันทึกเรียบร้อย! กำลังพาไปดูหน้าโพสต์...')
       setTimeout(() => {
         window.location.href = `/blog/${slug}`
@@ -186,7 +226,9 @@ export default function Editor() {
           value={title}
           onChange={(e) => {
             setTitle(e.target.value)
-            setSlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''))
+            if (!isEditing) {
+              setSlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''))
+            }
           }}
           className="admin-input"
         />
@@ -197,20 +239,30 @@ export default function Editor() {
           onChange={(e) => setSlug(e.target.value)}
           className={`admin-input ${!slugAvailable ? 'input-error' : ''}`}
         />
-        <select 
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="admin-input admin-select"
-        >
-          <option value="Journal">📒 Journal</option>
-          <option value="Life">🌱 Life</option>
-          <option value="Review">⭐ Review</option>
-          <option value="Travel">✈️ Travel</option>
-          <option value="Food">🍱 Food</option>
-          <option value="Thought">💭 Thought</option>
-          <option value="Tech">💻 Tech</option>
-          <option value="Work">💼 Work</option>
-        </select>
+        <div className="category-group">
+          <select 
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setIsCustomCategory(e.target.value === 'Other');
+            }}
+            className="admin-input admin-select"
+          >
+            {CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+            <option value="Other">✨ อื่นๆ (ระบุเอง)</option>
+          </select>
+          {isCustomCategory && (
+            <input 
+              type="text" 
+              placeholder="ระบุหมวดหมู่ใหม่..." 
+              value={customCategory}
+              onChange={(e) => setCustomCategory(e.target.value)}
+              className="admin-input custom-category-input animate-in"
+            />
+          )}
+        </div>
         <input 
           type="text" 
           placeholder="ชื่อผู้โพสต์" 
@@ -283,7 +335,9 @@ export default function Editor() {
       </div>
 
       <div className="footer-actions">
-        <button onClick={savePost} className="btn-save">Publish บทความ</button>
+        <button onClick={savePost} className="btn-save">
+          {isEditing ? 'บันทึกการแก้ไข' : 'Publish บทความ'}
+        </button>
         <span className="status-msg">{status}</span>
       </div>
     </div>
