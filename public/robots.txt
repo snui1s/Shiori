@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://web-blog-shiori.vercel.app/sitemap-index.xml
