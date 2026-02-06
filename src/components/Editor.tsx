@@ -185,33 +185,38 @@ export default function Editor({ initialSlug }: { initialSlug?: string }) {
     }
     setStatus('กำลังบันทึก...')
 
-    const content = editor.getHTML()
-    const url = isEditing ? `/api/posts/${initialSlug}` : '/api/posts';
-    const method = isEditing ? 'PATCH' : 'POST';
-    
-    const response = await fetch(url, {
-      method: method,
-      body: JSON.stringify({
-        title,
-        slug,
-        excerpt,
-        content,
-        category: isCustomCategory ? customCategory : category,
-        author,
-        image_url: imageUrl,
-      }),
-    })
+    try {
+      const content = editor.getHTML()
+      const url = isEditing ? `/api/posts/${initialSlug}` : '/api/posts';
+      const method = isEditing ? 'PATCH' : 'POST';
+      
+      const response = await fetch(url, {
+        method: method,
+        body: JSON.stringify({
+          title,
+          slug,
+          excerpt,
+          content,
+          category: isCustomCategory ? customCategory : category,
+          author,
+          image_url: imageUrl,
+        }),
+      })
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (response.ok) {
-      if (!isEditing) localStorage.removeItem(STORAGE_KEY)
-      setStatus('บันทึกเรียบร้อย! กำลังพาไปดูหน้าโพสต์...')
-      setTimeout(() => {
-        window.location.href = `/blog/${slug}`
-      }, 1000)
-    } else {
-      setStatus(`❌ บันทึกไม่สำเร็จ: ${result.error || 'เกิดข้อผิดพลาดบางอย่าง'}`)
+      if (response.ok) {
+        if (!isEditing) localStorage.removeItem(STORAGE_KEY)
+        setStatus('บันทึกเรียบร้อย! กำลังพาไปดูหน้าโพสต์...')
+        setTimeout(() => {
+          window.location.href = `/blog/${slug}`
+        }, 1000)
+      } else {
+        setStatus(`❌ บันทึกไม่สำเร็จ: ${result.error || 'เกิดข้อผิดพลาดบางอย่าง'}`)
+      }
+    } catch (error) {
+      console.error('Save post error:', error);
+      setStatus('❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง');
     }
   }
 

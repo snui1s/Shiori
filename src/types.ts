@@ -19,7 +19,8 @@ export interface Comment {
 }
 
 export interface Post {
-  id: string; // slug
+  id: number;
+  slug: string;
   title: string;
   excerpt: string;
   content?: string;

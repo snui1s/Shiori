@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { db, Post, User, eq } from 'astro:db';
 import { getSession } from "auth-astro/server";
 
+export const prerender = false;
+
 async function isAuthorized(request: Request) {
   const session = await getSession(request);
   if (!session || !session.user?.email) return false;
@@ -20,7 +22,8 @@ export const GET: APIRoute = async ({ params }) => {
     if (!post) return new Response(null, { status: 404 });
     return new Response(JSON.stringify(post), { status: 200 });
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    console.error('Get post error:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
 }
 
@@ -32,9 +35,8 @@ export const PATCH: APIRoute = async ({ params, request }) => {
   const { id } = params;
   if (!id) return new Response(null, { status: 400 });
   
-  const data = await request.json();
-
   try {
+    const data = await request.json();
     await db.update(Post)
       .set({
         title: data.title,
@@ -49,7 +51,11 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
     return new Response(JSON.stringify({ message: 'Updated successfully' }), { status: 200 });
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    if (error instanceof SyntaxError) {
+      return new Response(JSON.stringify({ error: 'Malformed JSON input' }), { status: 400 });
+    }
+    console.error('Update post error:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
 }
 
@@ -65,6 +71,7 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     await db.delete(Post).where(eq(Post.slug, id));
     return new Response(JSON.stringify({ message: 'Deleted successfully' }), { status: 200 });
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    console.error('Delete post error:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
 }

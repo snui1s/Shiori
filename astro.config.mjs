@@ -12,7 +12,7 @@ import auth from 'auth-astro';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://shiori-blog.vercel.app', // TODO: Update with your domain
+  site: 'https://shiori-blog.space',
   integrations: [react(), db(), sitemap(), auth()],
   output: 'server',
   adapter: vercel(),

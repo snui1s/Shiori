@@ -35,7 +35,7 @@ This project is built to be a **ready-to-use template**. You can clone it, chang
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/snui1s/Shiori.git
+git clone https://github.com/snui1s/Shiori-Blog.git
 cd web-blog
 bun install # or npm install
 ```

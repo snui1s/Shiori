@@ -16,7 +16,9 @@ export default defineConfig({
 				password: { label: "Password", type: "password" },
 			},
 			authorize: async (credentials) => {
-				console.log("Login attempt for email:", credentials?.email);
+				if (process.env.NODE_ENV === 'development') {
+					console.log("Login attempt for email:", credentials?.email);
+				}
 				if (!credentials?.email || !credentials?.password) {
 					console.log("Missing credentials");
 					return null;
@@ -43,7 +45,9 @@ export default defineConfig({
 					user.password
 				);
 
-				console.log("Password check result:", isValidPassword);
+				if (process.env.NODE_ENV === 'development') {
+					console.log("Password check result:", isValidPassword);
+				}
 
 				if (!isValidPassword) {
 					console.log("Invalid password");
@@ -94,7 +98,9 @@ export default defineConfig({
 					session.user.role = dbUser.role;
 					session.user.image = dbUser.image;
 					session.user.name = dbUser.name;
-					console.log("Session updated with DB user data:", { email: dbUser.email, image: dbUser.image });
+					if (process.env.NODE_ENV === 'development') {
+						console.log("Session updated with DB user data:", { email: dbUser.email, image: dbUser.image });
+					}
 				}
 			}
 			return session;

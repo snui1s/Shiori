@@ -26,6 +26,7 @@ const User = defineTable({
   }
 });
 
+// @ts-ignore - Circular reference in self-referencing table definition is a known TS limitation in Astro DB
 const PostComment = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
@@ -35,6 +36,8 @@ const PostComment = defineTable({
     }),
     parentId: column.number({ 
       optional: true,
+      // @ts-ignore
+      references: () => PostComment.columns.id,
       onDelete: 'cascade'
     }),
     userId: column.text({ 

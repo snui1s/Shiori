@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build --remote",
     "preview": "astro preview",
-    "test": "bun test",
+    "test": "vitest",
+    "test:watch": "vitest watch",
     "astro": "astro"
   },
   "dependencies": {

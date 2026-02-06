@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { db, Post, User, eq } from 'astro:db';
 import { getSession } from "auth-astro/server";
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   const session = await getSession(request);
   
@@ -20,9 +22,9 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ error: 'Forbidden: Admin only' }), { status: 403 });
   }
 
-  const data = await request.json();
-  
   try {
+    const data = await request.json();
+    
     // แปลงชื่อ field จาก snake_case (จาก Editor) เป็น camelCase (ตาม DB)
     await db.insert(Post).values({
       title: data.title,
@@ -36,6 +38,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({ message: 'Success' }), { status: 200 });
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    if (error instanceof SyntaxError) {
+      return new Response(JSON.stringify({ error: 'Malformed JSON input' }), { status: 400 });
+    }
+    console.error('Post creation error:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
 }

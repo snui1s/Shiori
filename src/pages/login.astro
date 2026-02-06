@@ -112,15 +112,11 @@ if (session) {
         submitBtn.disabled = true;
         submitBtn.textContent = "กำลังเข้าสู่ระบบ...";
 
-        console.log("Attempting login for:", email);
-
         const res = await signIn("credentials", {
           email,
           password,
           redirect: false,
         } as any);
-
-        console.log("SignIn raw response:", res);
 
         if (!res) {
           toast.error("ไม่ได้รับตอบสนองจากเซิร์ฟเวอร์", {
@@ -132,14 +128,12 @@ if (session) {
         }
 
         if (res.ok) {
-          console.log("Login OK! Toasting and redirecting...");
           toast.success("เข้าสู่ระบบสำเร็จ!", {
             position: "top-center",
             duration: 2000,
           });
 
           setTimeout(() => {
-            console.log("Redirecting to home...");
             window.location.assign("/");
           }, 500);
           return;
@@ -148,7 +142,6 @@ if (session) {
         let data;
         try {
           data = await res.json();
-          console.log("SignIn error data:", data);
         } catch (e) {
           data = {};
         }
@@ -166,7 +159,6 @@ if (session) {
         submitBtn.disabled = false;
         submitBtn.textContent = "เข้าสู่ระบบ";
       } catch (error) {
-        console.error("Login Error:", error);
         toast.error("เกิดข้อผิดพลาดในการเชื่อมต่อ", { position: "top-center" });
         submitBtn.disabled = false;
         submitBtn.textContent = "เข้าสู่ระบบ";

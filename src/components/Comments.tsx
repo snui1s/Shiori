@@ -139,11 +139,24 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
     return roots;
   };
 
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
   const fetchComments = async () => {
-    const res = await fetch(`/api/comments?postId=${postId}`);
-    if (res.ok) {
-      const data = await res.json();
-      setComments(buildCommentTree(data));
+    try {
+      const res = await fetch(`/api/comments?postId=${postId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setComments(buildCommentTree(data));
+        setFetchError(null);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        setFetchError(errorData.error || 'ไม่สามารถโหลดความคิดเห็นได้');
+        toast.error('ไม่สามารถโหลดความคิดเห็นได้');
+      }
+    } catch (err) {
+      console.error("Fetch Comments Error:", err);
+      setFetchError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      toast.error('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     }
   };
 
@@ -215,7 +228,13 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
       )}
 
       <div className="comments-list">
-        {comments.map((comment) => (
+        {fetchError && (
+          <div className="error-message-box glass">
+            <p>{fetchError}</p>
+            <button onClick={() => fetchComments()} className="btn-retry">ลองใหม่</button>
+          </div>
+        )}
+        {!fetchError && comments.map((comment) => (
           <CommentItem 
             key={comment.id} 
             comment={comment} 
@@ -229,7 +248,7 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
             loading={loading}
           />
         ))}
-        {comments.length === 0 && (
+        {!fetchError && comments.length === 0 && (
           <p className="no-comments">ยังไม่มีความคิดเห็น... เป็นคนแรกที่เริ่มบทสนทนากันเถอะ!</p>
         )}
       </div>

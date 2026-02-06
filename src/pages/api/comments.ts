@@ -53,7 +53,11 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     const pId = parseInt(body.postId);
-    const text = body.content as string;
+    
+    if (typeof body.content !== 'string' || body.content == null) {
+      return new Response(JSON.stringify({ error: "Missing or invalid content" }), { status: 400 });
+    }
+    const text = body.content;
     const parent = body.parentId ? parseInt(body.parentId) : null;
 
     // 1. Validation Logic
@@ -119,8 +123,7 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (err: any) {
     console.error("Comment Error:", err);
     return new Response(JSON.stringify({ 
-      error: "Database error", 
-      details: err.message 
+      error: "Internal server error" 
     }), { status: 500 });
   }
 };

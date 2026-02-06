@@ -13,7 +13,7 @@ const session = await getSession(Astro.request);
 const isAuthorized =
   session?.user &&
   (session.user.email === import.meta.env.ADMIN_EMAIL ||
-    (session.user as any).role === "admin");
+    session.user.role === "admin");
 
 if (!isAuthorized) {
   return Astro.redirect("/admin");

@@ -3,7 +3,9 @@ import { db, User, eq } from "astro:db";
 import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
 import { validateRegistration } from "../../../lib/auth";
-
+ 
+export const prerender = false;
+ 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const data = await request.formData();

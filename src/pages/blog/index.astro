@@ -9,8 +9,11 @@ export const prerender = false;
 const url = new URL(Astro.request.url);
 const searchQuery = url.searchParams.get("search") || "";
 const categoryFilter = url.searchParams.get("category") || "";
-const page = parseInt(url.searchParams.get("page") || "1");
-const limit = 6;
+
+const rawPage = parseInt(url.searchParams.get("page") || "1", 10);
+const page = isNaN(rawPage) ? 1 : Math.max(1, rawPage);
+
+const limit = 9;
 const offset = (page - 1) * limit;
 
 // 2. Fetch Unique Categories for Filter Dropdown
@@ -192,7 +195,7 @@ const displayPosts = posts.map((post) => ({
         <div class="pagination">
           {page > 1 && (
             <a
-              href={`/blog?page=${page - 1}${searchQuery ? `&search=${searchQuery}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+              href={`/blog?page=${page - 1}${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""}${categoryFilter ? `&category=${encodeURIComponent(categoryFilter)}` : ""}`}
               class="btn-pagination"
             >
               ← ก่อนหน้า
@@ -203,7 +206,7 @@ const displayPosts = posts.map((post) => ({
           </span>
           {page < totalPages && (
             <a
-              href={`/blog?page=${page + 1}${searchQuery ? `&search=${searchQuery}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+              href={`/blog?page=${page + 1}${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""}${categoryFilter ? `&category=${encodeURIComponent(categoryFilter)}` : ""}`}
               class="btn-pagination"
             >
               ถัดไป →
