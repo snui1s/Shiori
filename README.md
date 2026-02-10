@@ -1,148 +1,248 @@
-# 🏮 Shiori - Starter Template for Personal Blogs
+# Shiori
 
-Shiori is a high-performance, premium personal blog template built with Astro. It's designed for creators who want a minimalist, Time Capsule style blog that is easy to customize and deploy.
+A high-performance personal blog platform built with Astro. Designed for creators who value minimalist aesthetics, effortless writing, and genuine reader engagement.
 
-This project is built to be a **ready-to-use template**. You can clone it, change a few settings, and have your own professional blog live in minutes.
+Clone it. Configure it. Deploy it. Your blog is live.
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Deployment](#deployment)
+- [Customization](#customization)
+- [License](#license)
+
+---
+
+## Overview
+
+Shiori (栞) means "bookmark" in Japanese — a small thing that holds your place in a larger story. This project is built as a ready-to-use blog template with a full authentication system, a rich text editor, threaded comments, and an admin dashboard out of the box.
+
+It is optimized for Vercel with Turso (LibSQL) as the remote database, but can be adapted for other providers.
 
 ---
 
 ## Features
 
-- **Threaded Conversations**: A clean and organized comment system that lets readers follow discussions easily without the layout becoming cluttered.
-- **Instant Interaction**: Features real-time notifications (Success/Error toasts) so users get immediate feedback when they join the conversation.
-- **One-Click Login**: Readers can join instantly using their Google account or a simple registration, making it easy to build a community.
-- **Nice Reading Experience**: Optimized for focus with elegant typography and a Glassmorphism aesthetic that looks stunning on phones, tablets, and computers.
-- **Effortless Writing**: A powerful built-in editor for the owner to write, format, and upload images to their blog as easily as using a word processor.
+### For Readers
+
+- **Threaded Conversations** — Nested comment system with reply support, keeping discussions organized and easy to follow.
+- **Instant Feedback** — Real-time toast notifications for every interaction (posting, replying, errors).
+- **One-Click Login** — Sign in with Google OAuth or register with email/password. No unnecessary friction.
+- **Responsive Design** — Fully optimized for mobile, tablet, and desktop with a dark glassmorphism aesthetic.
+
+### For the Writer
+
+- **Rich Text Editor** — A built-in Tiptap editor with formatting, image uploads, links, and color support.
+- **Admin Dashboard** — Create, edit, and manage posts from a dedicated admin panel.
+- **Comment Moderation** — Admins can delete any comment; users can delete their own.
+- **Image Management** — Cloudinary integration for fast, optimized image hosting and delivery.
+
+### Under the Hood
+
+- **Server-Side Rendering** — Astro hybrid mode with selective client-side hydration for interactive components.
+- **Image Optimization** — Automatic Cloudinary transformations for responsive, optimized images.
+- **SEO Ready** — Structured data (JSON-LD), meta tags, Open Graph, sitemap generation, and semantic HTML.
+- **Type Safety** — Full TypeScript coverage across API routes, components, and database queries.
+- **Testing** — Vitest setup for unit and integration testing.
 
 ---
 
 ## Tech Stack
 
-- **Framework**: Astro 5.0+
-- **Database**: Astro DB (SQLite)
-- **Authentication**: Auth-Astro (Auth.js)
-- **Frontend Logic**: React (for interactive components)
-- **Testing**: Vitest
-- **Editor**: Tiptap (Headless Rich Text Editor)
-- **Image Hosting**: Cloudinary & ui-avatars.com
-- **UI and Styling**: Vanilla CSS
-- **Notifications**: React Hot Toast
+| Layer          | Technology                      |
+| -------------- | ------------------------------- |
+| Framework      | Astro 5                         |
+| Database       | Astro DB (LibSQL / Turso)       |
+| Authentication | Auth-Astro (Auth.js) + bcryptjs |
+| UI Components  | React 19                        |
+| Styling        | Tailwind CSS 4                  |
+| Animations     | Framer Motion                   |
+| Editor         | Tiptap (Headless Rich Text)     |
+| Image Hosting  | Cloudinary                      |
+| Notifications  | React Hot Toast                 |
+| Testing        | Vitest                          |
+| Deployment     | Vercel                          |
+
+---
+
+## Project Structure
+
+```
+src/
+├── components/          # React and Astro components
+│   ├── ui/              # Reusable UI primitives (Dropdown, etc.)
+│   ├── Comments.tsx     # Threaded comment system
+│   ├── BlogFeed.tsx     # Filterable post feed with pagination
+│   └── ...
+├── layouts/
+│   └── Layout.astro     # Base layout (header, footer, meta, styles)
+├── lib/                 # Shared utilities (image optimization, etc.)
+├── pages/
+│   ├── admin/           # Admin dashboard (new, edit, index)
+│   ├── api/             # API routes (comments, posts, auth)
+│   ├── blog/            # Blog listing and individual post pages
+│   ├── index.astro      # Homepage
+│   ├── profile.astro    # User profile page
+│   ├── login.astro      # Login page
+│   ├── signup.astro     # Registration page
+│   ├── about.astro      # About the author
+│   ├── privacy.astro    # Privacy policy
+│   └── terms.astro      # Terms of service
+├── tests/               # Test files
+└── types.ts             # Shared TypeScript interfaces
+db/
+├── config.ts            # Database schema definition
+└── seed.ts              # Seed data
+```
 
 ---
 
 ## Getting Started
 
-### 1. Clone & Install
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 18+ or [Bun](https://bun.sh/)
+- A Google Cloud project (for OAuth)
+- A Cloudinary account (for image uploads)
+- A Turso database (for production deployment)
+
+### 1. Clone and Install
 
 ```bash
 git clone https://github.com/snui1s/Shiori-Blog.git
 cd web-blog
-bun install # or npm install
+bun install
 ```
 
-### 2. Configure Environment Variables
+### 2. Configure Environment
 
-Create a `.env` file in the root directory and add your credentials. **Do not commit this file to version control!**
+Create a `.env` file in the project root:
 
 ```env
-# --- Admin & Dashboard ---
-# Your email used to identify the administrator/owner
+# Admin
 ADMIN_EMAIL=your_email@gmail.com
 
-# --- Database (Turso for Remote, SQLite for Local) ---
-# For local dev, you don't need these. For remote:
-# ASTRO_DB_REMOTE_URL=libsql://your-db-name.turso.io
-# ASTRO_DB_APP_TOKEN=your_turso_auth_token
+# Database (optional for local development)
+# ASTRO_DB_REMOTE_URL=libsql://your-db.turso.io
+# ASTRO_DB_APP_TOKEN=your_turso_token
 
-# --- Cloudinary (Image Uploads) ---
+# Cloudinary
 PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
 PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
 
-# --- Authentication (Auth.js / Google OAuth) ---
-AUTH_SECRET=a_random_32_character_string
+# Authentication
+AUTH_SECRET=your_random_32_char_string
+AUTH_TRUST_HOST=true
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-### 3. Run Development Server
+### 3. Start Development Server
 
 ```bash
-bun run dev # or npm run dev
+bun run dev
 ```
+
+The site will be available at `http://localhost:4321`.
 
 ### 4. Run Tests
 
 ```bash
-bun test # runs vitest
+bun test
 ```
 
 ---
 
-## How to Customize for Yourself
+## Configuration
 
-Shiori is designed to be easily personalized:
+### Google OAuth
 
-1. **Brand Name**: Change "Shiori" to your blog name in `src/layouts/Layout.astro` and `src/pages/index.astro`.
-2. **About Me**: Update your bio, photo, and details in `src/pages/about.astro`.
-3. **Now Section**: Change the randomized options (music, books, moods) at the top of `src/pages/index.astro`.
-4. **Themes**: Colors are managed via CSS variables in `src/layouts/Layout.astro`. Simply change `--color-primary` to match your brand.
+1. Go to [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project or select an existing one.
+3. Navigate to **APIs & Services** > **OAuth consent screen**.
+4. Set User Type to **External** and complete the required fields.
+5. Go to **Credentials** > **Create Credentials** > **OAuth client ID**.
+6. Select **Web application** as the application type.
+7. Add **Authorized JavaScript origins**:
+   - `http://localhost:4321`
+   - `https://your-domain.vercel.app`
+8. Add **Authorized redirect URIs**:
+   - `http://localhost:4321/api/auth/callback/google`
+   - `https://your-domain.vercel.app/api/auth/callback/google`
+9. Copy the **Client ID** and **Client Secret** into your `.env` file.
+
+### Cloudinary
+
+1. Sign up at [Cloudinary](https://cloudinary.com/).
+2. Copy your **Cloud Name** from the dashboard.
+3. Go to **Settings** > **Upload** > **Upload presets**.
+4. Create a new preset with **Signing Mode** set to **Unsigned**.
+5. Copy the **Cloud Name** and **Preset name** into your `.env` file.
+
+### Turso (Production Database)
+
+1. Create a database at [Turso](https://turso.tech/).
+2. Retrieve your **Database URL** and **Auth Token**.
+3. Add both to your `.env` file.
+4. Push the schema to the remote database:
+   ```bash
+   bun astro db push --remote
+   ```
 
 ---
 
 ## Deployment
 
-This template is optimized for **Vercel** with **Turso** (LibSQL) as the remote database.
+This project is configured for deployment on **Vercel**.
 
-### 1. Database Setup (Turso)
+### Steps
 
-1. Create a database on [Turso](https://turso.tech/).
-2. Get your **Database URL** and **Auth Token**.
-3. Push your schema to the remote database:
-   ```bash
-   bun astro db push --remote
-   ```
+1. Push your repository to GitHub.
+2. Import the project into [Vercel](https://vercel.com/).
+3. Add the following environment variables in the Vercel dashboard:
 
-### 2. Cloudinary Setup (for Image Uploads)
+   | Variable                          | Description                          |
+   | --------------------------------- | ------------------------------------ |
+   | `ADMIN_EMAIL`                     | Administrator email address          |
+   | `AUTH_SECRET`                     | Random string for session encryption |
+   | `AUTH_TRUST_HOST`                 | Set to `true`                        |
+   | `GOOGLE_CLIENT_ID`                | From Google Cloud Console            |
+   | `GOOGLE_CLIENT_SECRET`            | From Google Cloud Console            |
+   | `ASTRO_DB_REMOTE_URL`             | Turso database URL                   |
+   | `ASTRO_DB_APP_TOKEN`              | Turso authentication token           |
+   | `PUBLIC_CLOUDINARY_CLOUD_NAME`    | Cloudinary cloud name                |
+   | `PUBLIC_CLOUDINARY_UPLOAD_PRESET` | Cloudinary unsigned upload preset    |
 
-1. Sign up/Login at [Cloudinary](https://cloudinary.com/).
-2. Copy your **Cloud Name** from the dashboard.
-3. Go to **Settings** (gear icon) -> **Upload** tab.
-4. Scroll down to **Upload presets** and click **Add upload preset**.
-5. Change **Signing Mode** from "Signed" to **Unsigned**.
-6. Set the **Upload preset name** (or use the generated one) and click **Save**.
-7. Copy the **Cloud Name** and **Upload preset name** to your environment variables.
+4. Deploy. Vercel will automatically detect Astro and handle the build.
 
-### 3. Google OAuth Setup
+> To generate an `AUTH_SECRET`, run: `openssl rand -base64 32`
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a new Project.
-3. Search for **"APIs & Services"** -> **"OAuth consent screen"**.
-4. Set User Type to **External**, fill in the required app information, and add your email.
-5. Go to the **"Credentials"** tab -> **"Create Credentials"** -> **"OAuth client ID"**.
-6. Select Application Type: **Web application**.
-7. Add **Authorized JavaScript origins**:
-   - `http://localhost:4321`
-   - `https://your-domain.vercel.app` (your production URL)
-8. Add **Authorized redirect URIs**:
-   - `http://localhost:4321/api/auth/callback/google`
-   - `https://your-domain.vercel.app/api/auth/callback/google`
-9. Copy your **Client ID** and **Client Secret** to your environment variables.
+---
 
-### 4. Vercel Deployment
+## Customization
 
-1. Push your code to a GitHub repository.
-2. Import the project into **Vercel**.
-3. Add the following **Environment Variables**:
-   - `ADMIN_PASSWORD`: Your dashboard password.
-   - `AUTH_SECRET`: A random string for session encryption. (Use `openssl rand -base64 32` to generate one)
-   - `GOOGLE_CLIENT_ID`: From Google Cloud Console.
-   - `GOOGLE_CLIENT_SECRET`: From Google Cloud Console.
-   - `ASTRO_DB_REMOTE_URL`: Your Turso Database URL.
-   - `ASTRO_DB_APP_TOKEN`: Your Turso Auth Token.
-   - `PUBLIC_CLOUDINARY_CLOUD_NAME`: Your Cloudinary Cloud Name.
-   - `PUBLIC_CLOUDINARY_UPLOAD_PRESET`: Your **Unsigned** Upload Preset.
+Shiori is designed to be forked and personalized:
 
-Vercel will automatically detect Astro and deploy your server-side blog!
+| What to Change   | Where                                                                  |
+| ---------------- | ---------------------------------------------------------------------- |
+| Blog name        | `src/layouts/Layout.astro`, `src/pages/index.astro`                    |
+| About page       | `src/pages/about.astro`                                                |
+| Homepage content | `src/pages/index.astro`                                                |
+| Theme colors     | CSS variables in `src/layouts/Layout.astro` — change `--color-primary` |
+| Privacy / Terms  | `src/pages/privacy.astro`, `src/pages/terms.astro`                     |
+
+---
+
+## License
+
+This project is open source and available for personal and commercial use. Feel free to clone, modify, and make it your own.
 
 ---
 
@@ -151,3 +251,5 @@ Vercel will automatically detect Astro and deploy your server-side blog!
 Hello! I hope you like this project. If you are looking to start your own blog, please feel free to clone this repository and customize it into your own version. I would be more than happy to help you create your very own Time Capsule to document your life's journey.
 
 ---
+
+Built by [snui1s](https://github.com/snui1s)
