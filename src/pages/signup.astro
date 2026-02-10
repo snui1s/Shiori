@@ -10,37 +10,60 @@ if (session) {
 ---
 
 <Layout title="ลงทะเบียน">
-  <div class="login-container">
-    <div class="login-card">
-      <h1 class="login-title">สร้างบัญชีใหม่</h1>
-      <p class="login-subtitle">กรอกข้อมูลเพื่อเริ่มต้นใช้งาน</p>
+  <div
+    class="min-h-screen flex items-center justify-center bg-bg p-4 relative overflow-hidden"
+  >
+    <div
+      class="login-card glass p-8 md:p-12 rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.3)] w-full max-w-[520px] z-[2] border border-white/5 animate-slide-up"
+    >
+      <h1
+        class="text-[2rem] font-extrabold text-white mb-2 text-center -tracking-[0.5px]"
+      >
+        สร้างบัญชีใหม่
+      </h1>
+      <p class="text-text-muted text-center mb-10 text-base leading-relaxed">
+        กรอกข้อมูลเพื่อเริ่มต้นใช้งาน
+      </p>
 
-      <form class="login-form">
-        <div class="input-group">
-          <label for="name">ชื่อที่แสดง</label>
+      <form class="login-form flex flex-col gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="name" class="text-[0.9rem] font-medium text-white ml-1"
+            >ชื่อที่แสดง</label
+          >
           <input
             type="text"
             id="name"
             name="name"
             placeholder="Username ของคุณ"
             required
+            class="py-3.5 px-5 bg-white/5 border border-white/10 rounded-xl text-base text-white outline-none transition-all duration-300 focus:bg-white/10 focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-white/30"
           />
         </div>
 
-        <div class="input-group">
-          <label for="email">อีเมล</label>
+        <div class="flex flex-col gap-2">
+          <label for="email" class="text-[0.9rem] font-medium text-white ml-1"
+            >อีเมล</label
+          >
           <input
             type="email"
             id="email"
             name="email"
             placeholder="name@example.com"
             required
+            class="py-3.5 px-5 bg-white/5 border border-white/10 rounded-xl text-base text-white outline-none transition-all duration-300 focus:bg-white/10 focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-white/30"
           />
-          <p class="error-message" id="email-error"></p>
+          <p
+            class="text-[#ff4d4d] text-[0.85rem] mt-1 empty:hidden"
+            id="email-error"
+          >
+          </p>
         </div>
 
-        <div class="input-group">
-          <label for="password">รหัสผ่าน</label>
+        <div class="flex flex-col gap-2">
+          <label
+            for="password"
+            class="text-[0.9rem] font-medium text-white ml-1">รหัสผ่าน</label
+          >
           <input
             type="password"
             id="password"
@@ -48,11 +71,16 @@ if (session) {
             placeholder="ตั้งรหัสผ่าน (อย่างน้อย 8 ตัวอักษร)"
             minlength="8"
             required
+            class="py-3.5 px-5 bg-white/5 border border-white/10 rounded-xl text-base text-white outline-none transition-all duration-300 focus:bg-white/10 focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-white/30"
           />
         </div>
 
-        <div class="input-group">
-          <label for="confirm-password">ยืนยันรหัสผ่าน</label>
+        <div class="flex flex-col gap-2">
+          <label
+            for="confirm-password"
+            class="text-[0.9rem] font-medium text-white ml-1"
+            >ยืนยันรหัสผ่าน</label
+          >
           <input
             type="password"
             id="confirm-password"
@@ -60,109 +88,35 @@ if (session) {
             placeholder="กรอกรหัสผ่านอีกครั้ง"
             minlength="8"
             required
+            class="py-3.5 px-5 bg-white/5 border border-white/10 rounded-xl text-base text-white outline-none transition-all duration-300 focus:bg-white/10 focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-white/30"
           />
-          <p class="error-message" id="password-error"></p>
+          <p
+            class="text-[#ff4d4d] text-[0.85rem] mt-1 empty:hidden"
+            id="password-error"
+          >
+          </p>
         </div>
 
-        <button type="submit" class="btn-login" id="submit-btn"
-          >ลงทะเบียน</button
+        <button
+          type="submit"
+          class="bg-primary text-white py-4 rounded-xl text-[1.1rem] font-semibold transition-all duration-300 mt-2 shadow-[0_4px_12px_rgba(246,48,73,0.3)] hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(246,48,73,0.4)] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+          id="submit-btn">ลงทะเบียน</button
         >
       </form>
 
-      <script>
-        import toast from "react-hot-toast";
-
-        const form = document.querySelector(".login-form") as HTMLFormElement;
-        const passwordInput = document.getElementById(
-          "password",
-        ) as HTMLInputElement;
-        const confirmPasswordInput = document.getElementById(
-          "confirm-password",
-        ) as HTMLInputElement;
-        const emailInput = document.getElementById("email") as HTMLInputElement;
-        const passwordError = document.getElementById("password-error");
-        const emailError = document.getElementById("email-error");
-
-        function validatePassword() {
-          if (passwordInput.value !== confirmPasswordInput.value) {
-            if (passwordError) passwordError.textContent = "รหัสผ่านไม่ตรงกัน";
-            confirmPasswordInput.setCustomValidity("รหัสผ่านไม่ตรงกัน");
-          } else {
-            if (passwordError) passwordError.textContent = "";
-            confirmPasswordInput.setCustomValidity("");
-          }
-        }
-
-        function validateEmail() {
-          if (emailInput.validity.typeMismatch) {
-            if (emailError) emailError.textContent = "รูปแบบอีเมลไม่ถูกต้อง";
-          } else {
-            if (emailError) emailError.textContent = "";
-          }
-        }
-
-        passwordInput.addEventListener("input", validatePassword);
-        confirmPasswordInput.addEventListener("input", validatePassword);
-        emailInput.addEventListener("input", validateEmail);
-
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          validatePassword();
-          if (!form.checkValidity()) return;
-
-          const formData = new FormData(form);
-          const submitBtn = form.querySelector(
-            'button[type="submit"]',
-          ) as HTMLButtonElement;
-
-          try {
-            submitBtn.disabled = true;
-            submitBtn.textContent = "กำลังลงทะเบียน...";
-
-            const res = await fetch("/api/auth/register", {
-              method: "POST",
-              body: formData,
-            });
-
-            const data = await res.json();
-
-            if (data.success) {
-              toast.success("ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ", {
-                duration: 4000,
-                position: "top-center",
-              });
-              setTimeout(() => {
-                window.location.href = "/login";
-              }, 1500);
-            } else {
-              toast.error(data.message || "การลงทะเบียนล้มเหลว", {
-                position: "top-center",
-              });
-              submitBtn.disabled = false;
-              submitBtn.textContent = "ลงทะเบียน";
-            }
-          } catch (error) {
-            console.error("Register Error:", error);
-            toast.error("เกิดข้อผิดพลาดในการเชื่อมต่อ", {
-              position: "top-center",
-            });
-            submitBtn.disabled = false;
-            submitBtn.textContent = "ลงทะเบียน";
-          }
-        });
-      </script>
-
-      <div class="divider">
-        <span>หรือดำเนินการต่อด้วย</span>
+      <div
+        class="flex items-center gap-3 my-8 text-text-muted text-[0.9rem] font-medium before:content-[''] before:flex-1 before:h-px before:bg-white/10 after:content-[''] after:flex-1 after:h-px after:bg-white/10"
+      >
+        <span class="px-3">หรือดำเนินการต่อด้วย</span>
       </div>
 
       <SignIn
         provider="google"
-        class="btn-google"
+        class="flex items-center justify-center gap-3 w-full py-3.5 bg-white rounded-xl text-base font-semibold text-[#1a1a1a] transition-all duration-200 hover:bg-[#f0f0f0] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] cursor-pointer"
         options={{ callbackUrl: "/" }}
       >
         <svg
-          class="google-icon"
+          class="w-6 h-6"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -182,200 +136,112 @@ if (session) {
         <span>Google</span>
       </SignIn>
 
-      <p class="signup-link">
-        มีบัญชีอยู่แล้ว? <a href="/login">เข้าสู่ระบบ</a>
+      <p class="text-center mt-8 text-[0.95rem] text-text-muted">
+        มีบัญชีอยู่แล้ว? <a
+          href="/login"
+          class="text-primary font-bold no-underline hover:text-secondary hover:underline transition-colors"
+          >เข้าสู่ระบบ</a
+        >
       </p>
     </div>
   </div>
+
+  <style>
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-slide-up {
+      animation: slide-up 0.6s ease-out;
+    }
+  </style>
+
+  <script>
+    import toast from "react-hot-toast";
+
+    const form = document.querySelector(".login-form") as HTMLFormElement;
+    const passwordInput = document.getElementById(
+      "password",
+    ) as HTMLInputElement;
+    const confirmPasswordInput = document.getElementById(
+      "confirm-password",
+    ) as HTMLInputElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passwordError = document.getElementById("password-error");
+    const emailError = document.getElementById("email-error");
+
+    function validatePassword() {
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        if (passwordError) passwordError.textContent = "รหัสผ่านไม่ตรงกัน";
+        confirmPasswordInput.setCustomValidity("รหัสผ่านไม่ตรงกัน");
+      } else {
+        if (passwordError) passwordError.textContent = "";
+        confirmPasswordInput.setCustomValidity("");
+      }
+    }
+
+    function validateEmail() {
+      if (emailInput.validity.typeMismatch) {
+        if (emailError) emailError.textContent = "รูปแบบอีเมลไม่ถูกต้อง";
+      } else {
+        if (emailError) emailError.textContent = "";
+      }
+    }
+
+    passwordInput.addEventListener("input", validatePassword);
+    confirmPasswordInput.addEventListener("input", validatePassword);
+    emailInput.addEventListener("input", validateEmail);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      validatePassword();
+      if (!form.checkValidity()) return;
+
+      const formData = new FormData(form);
+      const submitBtn = form.querySelector(
+        'button[type="submit"]',
+      ) as HTMLButtonElement;
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "กำลังลงทะเบียน...";
+
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          toast.success("ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ", {
+            duration: 4000,
+            position: "top-center",
+          });
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1500);
+        } else {
+          toast.error(data.message || "การลงทะเบียนล้มเหลว", {
+            position: "top-center",
+          });
+          submitBtn.disabled = false;
+          submitBtn.textContent = "ลงทะเบียน";
+        }
+      } catch (error) {
+        console.error("Register Error:", error);
+        toast.error("เกิดข้อผิดพลาดในการเชื่อมต่อ", {
+          position: "top-center",
+        });
+        submitBtn.disabled = false;
+        submitBtn.textContent = "ลงทะเบียน";
+      }
+    });
+  </script>
 </Layout>
-
-<style>
-  .login-container {
-    max-width: 420px;
-    width: 100%;
-    padding: 3rem;
-    text-align: center;
-    align-self: center;
-    animation: fadeIn 0.6s ease-out;
-  }
-
-  .login-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 3rem;
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 520px;
-    z-index: 2;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    animation: slideUp 0.6s ease-out;
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .login-title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-    text-align: center;
-    letter-spacing: -0.5px;
-  }
-
-  .login-subtitle {
-    color: var(--color-text-muted);
-    text-align: center;
-    margin-bottom: 2.5rem;
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .error-message {
-    color: #ff4d4d;
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-    min-height: 0;
-  }
-
-  .input-group label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-text);
-    margin-left: 4px;
-  }
-
-  .input-group input {
-    padding: 0.875rem 1.25rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    font-size: 1rem;
-    font-family: var(--font-main);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
-    color: var(--color-text);
-  }
-
-  .input-group input:focus {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(246, 48, 73, 0.1);
-  }
-
-  .input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  .btn-login {
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 1rem;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    font-family: var(--font-main);
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 0.5rem;
-    box-shadow: 0 4px 12px rgba(246, 48, 73, 0.3);
-  }
-
-  .btn-login:hover {
-    background: var(--color-secondary);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(246, 48, 73, 0.4);
-  }
-
-  .divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 2rem 0;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .divider::before,
-  .divider::after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .divider span {
-    padding: 0 12px;
-  }
-
-  .btn-google {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.875rem;
-    background: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: var(--font-main);
-    color: #1a1a1a;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .btn-google:hover {
-    background: #f0f0f0;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .google-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .signup-link {
-    text-align: center;
-    margin-top: 2rem;
-    font-size: 0.95rem;
-    color: var(--color-text-muted);
-  }
-
-  .signup-link a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-  }
-
-  .signup-link a:hover {
-    color: var(--color-secondary);
-    text-decoration: underline;
-  }
-</style>

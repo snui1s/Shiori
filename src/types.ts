@@ -8,6 +8,7 @@ export interface User {
 
 export interface Comment {
   id: number;
+  userId: string;
   parentId?: number | null;
   content: string;
   createdAt: string;

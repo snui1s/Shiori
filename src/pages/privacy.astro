@@ -1,0 +1,168 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const lastUpdated = new Date().toLocaleDateString("th-TH", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout title="นโยบายความเป็นส่วนตัว | Shiori 栞">
+  <div class="container py-20 max-w-[800px]">
+    <!-- Header -->
+    <header class="mb-16 reveal">
+      <h1 class="text-4xl md:text-5xl font-black mb-6 gradient-text">
+        นโยบายความเป็นส่วนตัว
+      </h1>
+      <p class="text-text-muted">
+        อัปเดตล่าสุด: <span class="text-white font-medium">{lastUpdated}</span>
+      </p>
+    </header>
+
+    <!-- Content -->
+    <div
+      class="space-y-16 reveal stagger-1 text-text-muted/90 leading-relaxed text-lg"
+    >
+      <!-- Intro -->
+      <section>
+        <p>
+          ยินดีต้อนรับสู่ <strong class="text-white">Shiori 栞</strong> เราให้ความสำคัญกับความเป็นส่วนตัวของคุณอย่างสูงสุด
+          นโยบายนี้จัดทำขึ้นเพื่อชี้แจงให้คุณทราบว่าเราดูแลข้อมูลของคุณอย่างไร อย่างโปร่งใสและตรงไปตรงมา
+        </p>
+      </section>
+
+      <!-- 1. ข้อมูลที่เก็บ -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">01.</span> ข้อมูลที่เราเก็บรวบรวม
+        </h2>
+        <p class="mb-4">
+          เราเก็บรวบรวมข้อมูลเท่าที่จำเป็นเพื่อให้เว็บไซต์ทำงานได้เท่านั้น
+          ได้แก่:
+        </p>
+        <ul class="space-y-3 list-none pl-0">
+          <li class="flex items-start gap-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-white/40 mt-2.5 shrink-0"
+            ></span>
+            <span
+              ><strong>ข้อมูลบัญชี:</strong> ชื่อ, อีเมล, และรูปโปรไฟล์ที่คุณใช้ในการลงทะเบียน
+              (ผ่าน Google หรือ Email)</span
+            >
+          </li>
+          <li class="flex items-start gap-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-white/40 mt-2.5 shrink-0"
+            ></span>
+            <span
+              ><strong>ข้อมูลทางเทคนิค:</strong> คุกกี้ (Cookies), หมายเลข IP, และข้อมูล
+              Browser เพื่อความปลอดภัยและการวิเคราะห์ระบบ</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <!-- 2. การใช้ข้อมูล -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">02.</span> เราใช้ข้อมูลทำอะไร?
+        </h2>
+        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+          <div>
+            <h3 class="font-bold text-white mb-2">Authentication</h3>
+            <p class="text-sm">
+              เพื่อยืนยันตัวตนของคุณในการเข้าสู่ระบบและจัดการ Session
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold text-white mb-2">Communication</h3>
+            <p class="text-sm">
+              เพื่อแสดงชื่อและรูปของคุณในส่วนความคิดเห็น (Comments)
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold text-white mb-2">Security</h3>
+            <p class="text-sm">
+              เพื่อตรวจสอบและป้องกันการใช้งานที่ผิดปกติ (เช่น Spam)
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold text-white mb-2">Analytics</h3>
+            <p class="text-sm">
+              เพื่อวิเคราะห์สถิติการใช้งานเว็บไซต์ (ผ่าน Google Analytics)
+              แบบไม่ระบุตัวตน
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. คุกกี้ -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">03.</span> คุกกี้ (Cookies)
+        </h2>
+        <p class="mb-6">เว็บไซต์เราใช้คุกกี้เพื่อประสบการณ์ที่ดีที่สุด:</p>
+        <div class="space-y-4 text-base">
+          <div
+            class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4"
+          >
+            <span class="font-bold text-white min-w-[100px]">Necessary</span>
+            <span class="opacity-80"
+              >จำเป็นสำหรับการล็อกอินและจดจำสถานะ Session ของคุณ</span
+            >
+          </div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4"
+          >
+            <span class="font-bold text-white min-w-[100px]">Analytics</span>
+            <span class="opacity-80"
+              >เพื่อช่วยให้เราเข้าใจว่าผู้คนใช้งานเว็บอย่างไร (Google Analytics)</span
+            >
+          </div>
+        </div>
+        <p class="text-sm mt-6 italic opacity-50">
+          * คุณสามารถปิดการใช้งานคุกกี้ได้ในการตั้งค่าเบราว์เซอร์ของคุณ
+        </p>
+      </section>
+
+      <!-- 4. ความปลอดภัย -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">04.</span> ความปลอดภัยและการเปิดเผยข้อมูล
+        </h2>
+        <p>
+          เราสัญญาว่าจะ <strong class="text-white border-b border-primary/50"
+            >ไม่ขาย</strong
+          > ข้อมูลส่วนตัวของคุณให้กับบุคคลที่สามอย่างเด็ดขาด ข้อมูลของคุณจะถูกเปิดเผยเท่าที่จำเป็นตามกฎหมาย
+          หรือเพื่อให้บริการที่เกี่ยวข้อง (เช่น ระบบ Google OAuth) เท่านั้น
+        </p>
+      </section>
+
+      <!-- Contact -->
+      <section class="pt-10 border-t border-white/10 mt-16">
+        <p class="mb-4 text-base">
+          หากมีข้อสงสัยเพิ่มเติม สามารถติดต่อเราได้ทันที
+        </p>
+        <a
+          href="mailto:snailsqz@gmail.com"
+          class="text-white font-bold hover:text-primary transition-colors inline-flex items-center gap-2 group"
+        >
+          <span>ติดต่อผู้ดูแลระบบ</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="group-hover:translate-x-1 transition-transform"
+            ><line x1="5" y1="12" x2="19" y2="12"></line><polyline
+              points="12 5 19 12 12 19"></polyline></svg
+          >
+        </a>
+      </section>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,158 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const lastUpdated = new Date().toLocaleDateString("th-TH", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout title="ข้อตกลงการใช้งาน | Shiori 栞">
+  <div class="container py-20 max-w-[800px]">
+    <!-- Header -->
+    <header class="mb-16 reveal">
+      <h1
+        class="text-4xl md:text-5xl font-black mb-6 gradient-text text-balance"
+      >
+        ข้อตกลงการใช้งาน
+      </h1>
+      <p class="text-text-muted">
+        อัปเดตล่าสุด: <span class="text-white font-medium">{lastUpdated}</span>
+      </p>
+    </header>
+
+    <!-- Content -->
+    <div
+      class="space-y-16 reveal stagger-1 text-text-muted/90 leading-relaxed text-lg"
+    >
+      <!-- Intro -->
+      <section>
+        <p>
+          โปรดอ่านข้อกำหนดและเงื่อนไขเหล่านี้อย่างละเอียดก่อนใช้งานเว็บไซต์ <strong
+            class="text-white">Shiori 栞</strong
+          >
+          การเข้าถึงและใช้งานบริการของเรา ถือว่าท่านยอมรับและตกลงที่จะผูกพันตามข้อกำหนดเหล่านี้
+        </p>
+      </section>
+
+      <!-- 1. การยอมรับ -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">01.</span> การยอมรับข้อตกลง
+        </h2>
+        <p>
+          หากท่านไม่ยอมรับเงื่อนไขข้อใดข้อหนึ่ง
+          กรุณายุติการใช้งานเว็บไซต์นี้ทันที
+          เราขอสงวนสิทธิ์ในการระงับหรือยกเลิกการเข้าถึงของท่าน
+          หากพบว่ามีการละเมิดข้อตกลง
+        </p>
+      </section>
+
+      <!-- 2. ลิขสิทธิ์ -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">02.</span> เนื้อหาและลิขสิทธิ์
+        </h2>
+        <p class="mb-4">
+          เนื้อหา บทความ โค้ดตัวอย่าง และรูปภาพทั้งหมดที่ปรากฏบนเว็บไซต์นี้
+          (ยกเว้นเนื้อหาจากบุคคลที่สามที่ได้รับอนุญาต)
+          เป็นทรัพย์สินทางปัญญาของผู้เขียนแต่เพียงผู้เดียว
+        </p>
+        <ul class="space-y-3 list-none pl-0">
+          <li class="flex items-start gap-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 mt-2.5 shrink-0"
+            ></span>
+            <span
+              ><strong>สิ่งที่ทำได้:</strong> แชร์ลิงก์, นำไปอ้างอิงเพื่อการศึกษา
+              (พร้อมเครดิต), นำไอเดียไปต่อยอด</span
+            >
+          </li>
+          <li class="flex items-start gap-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 shrink-0"
+            ></span>
+            <span
+              ><strong>สิ่งที่ห้าม:</strong> คัดลอกไปลงเว็บอื่นโดยไม่ได้รับอนุญาต,
+              แอบอ้างว่าเป็นผลงานของตนเอง</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <!-- 3. คอมเมนต์ -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">03.</span> กฎการใช้งานชุมชน
+        </h2>
+        <p class="mb-4">
+          เราเปิดกว้างให้แสดงความคิดเห็นอย่างเสรี
+          แต่ขอความร่วมมือในการรักษามารยาทเพื่อสังคมที่ดี:
+        </p>
+        <div
+          class="pl-6 border-l-2 border-white/10 space-y-2 text-base italic opacity-80"
+        >
+          <p>
+            "ห้ามใช้ถ้อยคำหยาบคาย รุนแรง หรือสร้างความเกลียดชัง (Hate Speech)"
+          </p>
+          <p>"ห้ามโพสต์สแปม (Spam) ลิงก์พนัน หรือโฆษณาแฝง"</p>
+        </div>
+        <p class="mt-4 text-sm">
+          *
+          เราขอสงวนสิทธิ์ในการลบข้อความที่เข้าข่ายดังกล่าวโดยไม่ต้องแจ้งให้ทราบล่วงหน้า
+        </p>
+      </section>
+
+      <!-- 4. Disclaimer -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">04.</span> การปฏิเสธความรับผิด
+        </h2>
+        <p>
+          เนื้อหาในบล็อกนี้เป็นเพียงความคิดเห็นและประสบการณ์ส่วนตัวของผู้เขียน
+          ผู้อ่านควรใช้วิจารณญาณในการนำข้อมูลไปประยุกต์ใช้
+          ผู้เขียนจะไม่รับผิดชอบต่อความเสียหายใดๆ
+          ที่อาจเกิดขึ้นจากการปฏิบัติตามเนื้อหาในเว็บไซต์นี้
+        </p>
+      </section>
+
+      <!-- 5. การแก้ไข -->
+      <section>
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <span class="text-primary">05.</span> การแก้ไขข้อกำหนด
+        </h2>
+        <p>
+          เราอาจปรับปรุงข้อกำหนดเหล่านี้ได้ตลอดเวลาตามความเหมาะสม
+          โดยการเปลี่ยนแปลงจะมีผลทันทีเมื่อประกาศบนหน้าเว็บไซต์
+          ขอแนะนำให้ท่านทบทวนหน้านี้เป็นระยะๆ
+        </p>
+      </section>
+
+      <!-- Contact -->
+      <section class="pt-10 border-t border-white/10 mt-16">
+        <p class="mb-4 text-base">
+          หากพบเนื้อหาที่ไม่เหมาะสม หรือต้องการสอบถามเรื่องลิขสิทธิ์
+        </p>
+        <a
+          href="mailto:snailsqz@gmail.com"
+          class="text-white font-bold hover:text-primary transition-colors inline-flex items-center gap-2 group"
+        >
+          <span>ติดต่อผู้ดูแลระบบ</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="group-hover:translate-x-1 transition-transform"
+            ><line x1="5" y1="12" x2="19" y2="12"></line><polyline
+              points="12 5 19 12 12 19"></polyline></svg
+          >
+        </a>
+      </section>
+    </div>
+  </div>
+</Layout>

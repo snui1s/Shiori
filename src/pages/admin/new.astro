@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Editor from "../../components/Editor";
-import "../../styles/admin.css";
 
 import { getSession } from "auth-astro/server";
 
@@ -23,15 +22,27 @@ if (!isAuthorized) {
   src="https://upload-widget.cloudinary.com/global/all.js"
   type="text/javascript"></script>
 
-<Layout title="เขียนบันทึกใหม่ | Shiori">
-  <div class="container admin-page">
-    <div class="admin-dashboard-layout">
-      <div class="admin-header">
+<Layout title="เขียนบันทึกใหม่">
+  <div class="container py-12 md:py-20 min-h-[90vh]">
+    <div class="animate-fade-in w-full max-w-[1000px] mx-auto">
+      <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12"
+      >
         <div class="header-content">
-          <h1 class="h-gradient">เขียนบันทึกใหม่</h1>
-          <p>ถ่ายทอดความทรงจำลงบนหน้ากระดาษดิจิทัล</p>
+          <h1
+            class="text-[2.5rem] md:text-[3rem] font-bold h-gradient leading-tight"
+          >
+            เขียนบันทึกใหม่
+          </h1>
+          <p class="text-text-muted mt-2 text-lg">
+            ถ่ายทอดความทรงจำลงบนหน้ากระดาษดิจิทัล
+          </p>
         </div>
-        <a href="/admin" class="btn btn-outline">ยกเลิกและกลับ</a>
+        <a
+          href="/admin"
+          class="border border-white/10 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:bg-white/5 hover:border-white no-underline text-center w-full md:w-auto"
+          >ยกเลิกและกลับ</a
+        >
       </div>
       <Editor client:load />
     </div>
@@ -39,16 +50,23 @@ if (!isAuthorized) {
 </Layout>
 
 <style>
-  .admin-page {
-    padding: 40px 0;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  .admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
   }
-  .admin-header h1 {
-    margin: 0;
+  .h-gradient {
+    background: linear-gradient(to right, #fff, #a0aec0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 </style>

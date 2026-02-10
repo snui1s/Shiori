@@ -1,8 +1,57 @@
 import type { APIRoute } from 'astro';
-import { db, Post, User, eq } from 'astro:db';
+import { db, Post, User, eq, like, and, desc, sql } from 'astro:db';
 import { getSession } from "auth-astro/server";
 
 export const prerender = false;
+
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
+  const search = url.searchParams.get('search') || '';
+  const category = url.searchParams.get('category') || '';
+  const page = parseInt(url.searchParams.get('page') || '1');
+  const limit = parseInt(url.searchParams.get('limit') || '9');
+  const offset = (page - 1) * limit;
+
+  try {
+    let conditions = [];
+    if (search) conditions.push(like(Post.title, `%${search}%`));
+    if (category) conditions.push(eq(Post.category, category));
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // Get posts
+    const posts = await db
+      .select()
+      .from(Post)
+      .where(whereClause)
+      .orderBy(desc(Post.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    // Get total count
+    const totalCountResult = await db
+      .select({ count: sql`count(*)` })
+      .from(Post)
+      .where(whereClause);
+    
+    const total = Number(totalCountResult[0].count);
+
+    return new Response(JSON.stringify({ 
+      posts: posts.map(p => ({
+        ...p,
+        image: p.imageUrl // Add image property for consistency
+      })), 
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error('Fetch posts error:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch posts' }), { status: 500 });
+  }
+};
 
 export const POST: APIRoute = async ({ request }) => {
   const session = await getSession(request);

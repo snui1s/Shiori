@@ -1,73 +1,94 @@
-:root {
+@import "tailwindcss";
+
+@theme {
   --color-primary: #f63049;
   --color-secondary: #d02752;
   --color-accent: #8a244b;
-  --color-bg: #111f35;
-  --color-text: #ffffff;
-  --color-text-muted: #a0aec0;
-  --font-main: 'IBM Plex Sans Thai', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-heading: 'Outfit', 'IBM Plex Sans Thai', sans-serif;
+  --color-bg: #0f172a; /* Brightened slightly from #0b1120 for better depth */
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  --font-main: "IBM Plex Sans Thai", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-heading: "Outfit", "IBM Plex Sans Thai", sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Performance: Modern browsers handle static noise patterns better than feTurbulence filters */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Use a static, pre-rendered looking noise to avoid CPU computation on every scroll */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: soft-light; /* Changed from 'overlay' to be subtler */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+    font-family: var(--font-heading);
+    line-height: 1.2;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  a:hover {
+    color: var(--color-secondary);
+    opacity: 0.9;
+  }
 }
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-main);
-  line-height: 1.6;
-}
+@layer components {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #ffffff;
-  font-family: var(--font-heading);
-  line-height: 1.2;
-}
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+  }
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 
-a:hover {
-  color: var(--color-secondary);
-  opacity: 0.9;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--color-secondary)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  .h-gradient {
+    background: linear-gradient(to right, #fff, #a0aec0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 /* Tiptap Editor & Content Styles */
@@ -102,4 +123,108 @@ a:hover {
   height: auto;
   border-radius: 0.8rem;
   margin: 1.5rem 0;
+}
+
+.rich-text-content ul, .rich-text-content ol, .ProseMirror ul, .ProseMirror ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-content li, .ProseMirror li {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content ul li, .ProseMirror ul li {
+  list-style-type: disc;
+}
+
+.rich-text-content ol li, .ProseMirror ol li {
+  list-style-type: decimal;
+}
+
+.rich-text-content .asset-caption, .ProseMirror .asset-caption {
+  display: block;
+  text-align: center;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.rich-text-content strong, .ProseMirror strong {
+  color: white;
+  font-weight: 600;
+}
+
+/* Editor Admin Styles */
+.tiptap-editor-admin .ProseMirror {
+  min-height: 400px;
+  outline: none;
+}
+
+.tiptap-editor-admin .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #a0aec0;
+  pointer-events: none;
+  height: 0;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Advanced Entrance Animations */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  animation: reveal 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.glow-primary {
+  box-shadow: 0 0 20px rgba(246, 48, 73, 0.15);
+}
+
+.glass-premium {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  /* Optimization: Reduce repaint area */
+  isolation: isolate; 
+}
+
+@keyframes reveal-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-reveal-drop {
+  animation: reveal-drop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }

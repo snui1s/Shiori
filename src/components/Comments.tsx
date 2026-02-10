@@ -4,11 +4,11 @@ import { validateCommentContent } from '../lib/comments';
 import { getOptimizedImageUrl } from '../lib/images';
 import type { Comment } from '../types';
 
-import '../styles/components/Comments.css';
-
 interface CommentsProps {
   postId: number;
   session: any;
+  currentUser: any;
+  isAdmin: boolean;
 }
 
 interface CommentItemProps {
@@ -16,12 +16,16 @@ interface CommentItemProps {
   isReply?: boolean;
   depth: number;
   session: any;
+  currentUser: any;
+  isAdmin: boolean;
   replyTo: number | null;
   setReplyTo: (id: number | null) => void;
   replyContent: string;
   setReplyContent: (content: string) => void;
   handleSubmit: (e: React.SyntheticEvent<HTMLFormElement>, parentId: number | null) => Promise<void>;
+  handleDelete: (commentId: number) => Promise<void>;
   loading: boolean;
+  index: number;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({ 
@@ -29,96 +33,163 @@ const CommentItem: React.FC<CommentItemProps> = ({
   isReply = false, 
   depth,
   session, 
+  currentUser,
+  isAdmin,
   replyTo, 
   setReplyTo, 
   replyContent, 
   setReplyContent, 
   handleSubmit, 
-  loading 
-}) => (
-  <div className={`comment-container ${isReply ? 'comment-reply' : ''}`}>
-    <div className="comment-item glass">
-      <img 
-        src={getOptimizedImageUrl(comment.user.image, 48) || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.name)}&background=f63049&color=fff`} 
-        alt={comment.user.name} 
-        className="comment-avatar" 
-        loading="lazy"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.name)}&background=f63049&color=fff`;
-        }}
-      />
-      <div className="comment-body">
-        <div className="comment-header">
-          <span className="comment-author">{comment.user.name}</span>
-          <span className="comment-date">
-            {new Date(comment.createdAt).toLocaleString('th-TH', {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })} น.
-          </span>
-        </div>
-        <p className="comment-content">{comment.content}</p>
-        
-        {session && depth < 1 && (
-          <button 
-            onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-            className="btn-reply-toggle"
-          >
-            {replyTo === comment.id ? 'ยกเลิก' : 'ตอบกลับ'}
-          </button>
-        )}
+  handleDelete,
+  loading,
+  index
+}) => {
+  const isAuthor = currentUser?.id === comment.userId;
+  const canDelete = isAuthor || isAdmin;
 
-        {replyTo === comment.id && (
-          <form onSubmit={(e) => handleSubmit(e, comment.id)} className="reply-form">
-            <textarea
-              value={replyContent}
-              onChange={(e) => setReplyContent(e.target.value)}
-              placeholder={`ตอบกลับ ${comment.user.name}...`}
-              className="comment-textarea glass"
-              rows={2}
-              autoFocus
-            />
-            <div className="reply-actions">
-              <button type="submit" disabled={loading} className="btn-comment btn-small">
-                {loading ? '...' : 'ส่ง'}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
-    
-    {comment.replies && comment.replies.length > 0 && (
-      <div className="replies-list">
-        {comment.replies.map(reply => (
-          <CommentItem 
-            key={reply.id} 
-            comment={reply} 
-            isReply={true} 
-            depth={depth + 1}
-            session={session}
-            replyTo={replyTo}
-            setReplyTo={setReplyTo}
-            replyContent={replyContent}
-            setReplyContent={setReplyContent}
-            handleSubmit={handleSubmit}
-            loading={loading}
+  return (
+    <div className={`flex flex-col gap-4 reveal stagger-${index % 5 + 1} ${isReply ? 'ml-8 md:ml-14 relative before:content-[""] before:absolute before:left-[-1.5rem] md:before:left-[-2rem] before:top-0 before:bottom-8 before:w-px before:bg-white/10' : ''}`}>
+      <div className="bg-white/[0.01] border border-white/[0.03] p-5 md:p-6 rounded-[1.5rem] flex gap-4 md:gap-5 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.02] shadow-sm group">
+        <div className="relative shrink-0">
+          <img 
+            src={getOptimizedImageUrl(comment.user.image, 48) || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.name)}&background=f63049&color=fff`} 
+            alt={comment.user.name} 
+            className="w-11 h-11 md:w-12 md:h-12 rounded-xl object-cover ring-2 ring-white/5" 
+            loading="lazy"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.name)}&background=f63049&color=fff`;
+            }}
           />
-        ))}
-      </div>
-    )}
-  </div>
-);
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-baseline mb-2">
+            <span className="font-bold text-white text-[1rem] truncate">{comment.user.name}</span>
+            <span className="text-[0.7rem] text-text-muted whitespace-nowrap ml-2 uppercase tracking-wider font-medium opacity-60">
+              {new Date(comment.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}
+            </span>
+          </div>
+          
+          <p className="text-slate-300 leading-relaxed text-[0.95rem] md:text-base mb-4 break-words whitespace-pre-wrap">{comment.content}</p>
+          
+          <div className="flex items-center gap-4">
+            {session && depth < 1 && (
+              <button 
+                onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                className="text-[0.8rem] md:text-[0.85rem] font-bold text-primary hover:text-secondary hover:underline transition-all cursor-pointer"
+              >
+                {replyTo === comment.id ? 'ยกเลิก' : 'ตอบกลับ'}
+              </button>
+            )}
+            
+            {canDelete && (
+                <button
+                    onClick={() => {
+                        toast((t) => (
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm font-medium text-white">ต้องการลบความคิดเห็นนี้?</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  toast.dismiss(t.id);
+                                }}
+                                className="px-3 py-1.5 rounded-lg text-xs font-bold text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                              >
+                                ยกเลิก
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleDelete(comment.id);
+                                  toast.dismiss(t.id);
+                                }}
+                                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-lg transition-all"
+                              >
+                                ลบเลย
+                              </button>
+                            </div>
+                          </div>
+                        ), {
+                          style: {
+                            background: "rgba(20, 20, 20, 0.9)",
+                            backdropFilter: "blur(12px)",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            color: "#fff",
+                            borderRadius: "16px",
+                            padding: "12px 16px",
+                            boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
+                          },
+                          position: "top-center",
+                          duration: 5000,
+                        });
+                    }}
+                    className="text-text-muted hover:text-red-500 transition-colors cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100"
+                    title="ลบความคิดเห็น"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </button>
+            )}
 
-const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
+            <span className="text-[0.8rem] text-text-muted/40 font-mono ml-auto">#{comment.id}</span>
+          </div>
+  
+          {replyTo === comment.id && (
+            <form onSubmit={(e) => handleSubmit(e, comment.id)} className="mt-5 animate-slide-down">
+              <textarea
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                placeholder={`เขียนคำตอบให้ ${comment.user.name}...`}
+                className="w-full bg-transparent border border-white/10 rounded-2xl p-4 text-white text-[0.95rem] outline-none focus:border-primary transition-all resize-none"
+                rows={2}
+                autoFocus
+              />
+              <div className="flex justify-end mt-3">
+                <button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-full font-bold text-sm transition-all shadow-lg hover:shadow-primary/20 disabled:opacity-50 cursor-pointer"
+                >
+                  {loading ? '...' : 'ส่งคำตอบ'}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+      
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="flex flex-col gap-4">
+          {comment.replies.map((reply, idx) => (
+            <CommentItem 
+              key={reply.id} 
+              comment={reply} 
+              isReply={true} 
+              depth={depth + 1}
+              session={session}
+              currentUser={currentUser}
+              isAdmin={isAdmin}
+              replyTo={replyTo}
+              setReplyTo={setReplyTo}
+              replyContent={replyContent}
+              setReplyContent={setReplyContent}
+              handleSubmit={handleSubmit}
+              handleDelete={handleDelete}
+              loading={loading}
+              index={idx + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Comments: React.FC<CommentsProps> = ({ postId, session, currentUser, isAdmin }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const buildCommentTree = (flatComments: any[]) => {
     const map: { [key: number]: Comment } = {};
@@ -139,8 +210,6 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
     return roots;
   };
 
-  const [fetchError, setFetchError] = useState<string | null>(null);
-
   const fetchComments = async () => {
     try {
       const res = await fetch(`/api/comments?postId=${postId}`);
@@ -151,12 +220,9 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
       } else {
         const errorData = await res.json().catch(() => ({}));
         setFetchError(errorData.error || 'ไม่สามารถโหลดความคิดเห็นได้');
-        toast.error('ไม่สามารถโหลดความคิดเห็นได้');
       }
     } catch (err) {
-      console.error("Fetch Comments Error:", err);
       setFetchError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
-      toast.error('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     }
   };
 
@@ -164,11 +230,27 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
     fetchComments();
   }, [postId]);
 
+  const handleDelete = async (commentId: number) => {
+    try {
+      const res = await fetch(`/api/comments?id=${commentId}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        toast.success("ลบความคิดเห็นสำเร็จ");
+        await fetchComments();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "ลบไม่สำเร็จ");
+      }
+    } catch (err) {
+      toast.error("เกิดข้อผิดพลาดในการลบ");
+    }
+  };
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>, parentId: number | null = null) => {
     e.preventDefault();
     const content = parentId ? replyContent : newComment;
     
-    // Validation
     const validation = validateCommentContent(content);
     if (!validation.isValid) {
       toast.error(validation.message || 'ข้อความไม่ถูกต้อง');
@@ -205,54 +287,70 @@ const Comments: React.FC<CommentsProps> = ({ postId, session }) => {
   };
 
   return (
-    <div className="comments-section">
-      <h3 className="comments-title">ความคิดเห็น</h3>
+    <section className="mt-24 w-full max-w-[850px] mx-auto px-4 md:px-0 reveal">
+      <h3 className="text-2xl md:text-[2.2rem] font-bold text-center mb-12 h-gradient tracking-tight">
+        Garden of Words
+      </h3>
 
       {session ? (
-        <form onSubmit={(e) => handleSubmit(e)} className="comment-form main-form">
+        <form onSubmit={(e) => handleSubmit(e)} className="bg-transparent border-none shadow-none p-0 mb-16 flex flex-col gap-6 relative group/form">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent pointer-events-none"></div>
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="เล่าความรู้สึกของคุณผ่านคอมเมนต์นี้..."
-            className="comment-textarea glass"
-            rows={3}
+            placeholder="เล่าความรู้สึกของคุณผ่านบันทึกนี้..."
+            className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white text-l outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all min-h-[140px] resize-none relative z-10"
           />
-          <button type="submit" disabled={loading} className="btn-comment">
-            {loading ? 'กำลังส่ง...' : 'ส่งความคิดเห็น'}
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className="self-end bg-gradient-to-r from-primary to-secondary text-white px-10 py-4 rounded-full font-bold text-base transition-all hover:-translate-y-1 hover:shadow-[0_10px_25px_-5px_#f63049] active:scale-95 disabled:opacity-50 cursor-pointer relative z-10"
+          >
+            {loading ? 'กำลังส่ง...' : 'ร่วมแบ่งปันความคิด'}
           </button>
         </form>
       ) : (
-        <div className="login-prompt glass">
-          <p>ล็อกอินด้วย Google เพื่อร่วมแสดงความคิดเห็นนะจ๊ะ 🏮</p>
+        <div className="py-12 px-8 text-center rounded-[2.5rem] border border-dashed border-white/10 bg-white/[0.01] mb-12 flex flex-col items-center gap-2">
+          <p className="text-text-muted text-lg">ล็อกอินด้วย Google เพื่อร่วมเป็นส่วนหนึ่งของชุมชนนะจ๊ะ</p>
+          <span className="text-sm opacity-40">เชื่อมต่อหัวใจผ่านตัวอักษร</span>
         </div>
       )}
 
-      <div className="comments-list">
+      <div className="flex flex-col gap-8">
         {fetchError && (
-          <div className="error-message-box glass">
-            <p>{fetchError}</p>
-            <button onClick={() => fetchComments()} className="btn-retry">ลองใหม่</button>
+          <div className="glass-premium p-10 text-center rounded-3xl border border-primary/20">
+            <p className="text-primary font-bold mb-4">{fetchError}</p>
+            <button onClick={() => fetchComments()} className="text-white bg-primary px-6 py-2 rounded-full font-bold">ลองใหม่</button>
           </div>
         )}
-        {!fetchError && comments.map((comment) => (
+        
+        {!fetchError && comments.map((comment, idx) => (
           <CommentItem 
             key={comment.id} 
             comment={comment} 
             depth={0}
             session={session}
+            currentUser={currentUser}
+            isAdmin={isAdmin}
             replyTo={replyTo}
             setReplyTo={setReplyTo}
             replyContent={replyContent}
             setReplyContent={setReplyContent}
             handleSubmit={handleSubmit}
+            handleDelete={handleDelete}
             loading={loading}
+            index={idx}
           />
         ))}
+        
         {!fetchError && comments.length === 0 && (
-          <p className="no-comments">ยังไม่มีความคิดเห็น... เป็นคนแรกที่เริ่มบทสนทนากันเถอะ!</p>
+          <div className="text-center py-20 opacity-40 flex flex-col items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square-dashed"><path d="M5 3a2 2 0 0 0-2 2"/><path d="M19 3a2 2 0 0 1 2 2"/><path d="M5 21a2 2 0 0 1-2-2"/><path d="M19 21a2 2 0 0 0 2-2"/><path d="M9 3h1"/><path d="M14 3h1"/><path d="M9 21h1"/><path d="M14 21h1"/><path d="M3 9v1"/><path d="M3 14v1"/><path d="M21 9v1"/><path d="M21 14v1"/></svg>
+            <p className="text-lg italic">ยังไม่มีใครแวะมาทิ้งบันทึกไว้เลย...</p>
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -22,6 +22,7 @@ export const GET: APIRoute = async ({ url }) => {
       .select({
         id: PostComment.id,
         parentId: PostComment.parentId,
+        userId: PostComment.userId, // Added for permission checks
         content: PostComment.content,
         createdAt: PostComment.createdAt,
         user: {
@@ -40,6 +41,56 @@ export const GET: APIRoute = async ({ url }) => {
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+  }
+};
+
+// DELETE: Remove a comment
+export const DELETE: APIRoute = async ({ url, request }) => {
+  const session = await getSession(request);
+  if (!session?.user?.email) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
+
+  const commentIdParam = url.searchParams.get("id");
+  if (!commentIdParam) {
+    return new Response(JSON.stringify({ error: "Missing comment ID" }), { status: 400 });
+  }
+
+  const commentId = parseInt(commentIdParam);
+  if (isNaN(commentId)) {
+    return new Response(JSON.stringify({ error: "Invalid comment ID" }), { status: 400 });
+  }
+
+  try {
+    // 1. Fetch the comment to check ownership
+    const [comment] = await db.select().from(PostComment).where(eq(PostComment.id, commentId));
+    if (!comment) {
+      return new Response(JSON.stringify({ error: "Comment not found" }), { status: 404 });
+    }
+
+    // 2. Fetch current user to check role/id
+    const [currentUser] = await db.select().from(User).where(eq(User.email, session.user.email));
+    
+    if (!currentUser) {
+      return new Response(JSON.stringify({ error: "User profile error" }), { status: 403 });
+    }
+
+    // 3. Check Permissions
+    const isAdmin = currentUser.role === "admin" || session.user.email === import.meta.env.ADMIN_EMAIL;
+    const isAuthor = comment.userId === currentUser.id;
+
+    if (!isAdmin && !isAuthor) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+    }
+
+    // 4. Delete
+    await db.delete(PostComment).where(eq(PostComment.id, commentId));
+
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+
+  } catch (err) {
+    console.error("Delete Error:", err);
+    return new Response(JSON.stringify({ error: "Failed to delete comment" }), { status: 500 });
   }
 };
 

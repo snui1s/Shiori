@@ -1,20 +1,14 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { db, Post, desc, eq, like, and, sql } from "astro:db";
+import { db, Post, desc, sql } from "astro:db";
+import BlogFeed from "../../components/BlogFeed";
 
 // Handle dynamic routing/rendering in Astro SSR mode
 export const prerender = false;
 
-// 1. Get Params for Filter and Search
-const url = new URL(Astro.request.url);
-const searchQuery = url.searchParams.get("search") || "";
-const categoryFilter = url.searchParams.get("category") || "";
-
-const rawPage = parseInt(url.searchParams.get("page") || "1", 10);
-const page = isNaN(rawPage) ? 1 : Math.max(1, rawPage);
-
+// 1. Initial Page Load Param
 const limit = 9;
-const offset = (page - 1) * limit;
+const offset = 0;
 
 // 2. Fetch Unique Categories for Filter Dropdown
 const categoriesResult = await db
@@ -23,445 +17,57 @@ const categoriesResult = await db
   .all();
 const allCategories = categoriesResult.map((c) => c.category);
 
-// 3. Build Query Conditions
-let conditions = [];
-if (searchQuery) {
-  conditions.push(like(Post.title, `%${searchQuery}%`));
-}
-if (categoryFilter) {
-  conditions.push(eq(Post.category, categoryFilter));
-}
-
-const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-// 4. Fetch Posts with Pagination
+// 3. Fetch Initial Posts (Page 1, No Filters)
+// Note: We ignore URL queries for SSR here to keep cache simple or let client handle deep linking state manually if needed.
+// Or, if we want SSR to respect deep linking, we can parse URL here. But let's keep it simple: SSR initial load, then Client takes over.
+// Actually, it's better if SSR matches client initial state. But for "No Reload" request, Client-side primary logic is fine.
 const posts = await db
   .select()
   .from(Post)
-  .where(whereClause)
   .orderBy(desc(Post.createdAt))
   .limit(limit)
   .offset(offset);
 
-// 5. Total count for Pagination
-const totalCountResult = await db
-  .select({ count: sql`count(*)` })
-  .from(Post)
-  .where(whereClause);
+// 4. Total count for Initial Pagination
+const totalCountResult = await db.select({ count: sql`count(*)` }).from(Post);
 const totalCount = Number(totalCountResult[0].count);
 const totalPages = Math.ceil(totalCount / limit);
 
-const displayPosts = posts.map((post) => ({
-  title: post.title,
-  slug: post.slug,
-  excerpt: post.excerpt,
-  date:
-    new Date(post.createdAt).toLocaleString("th-TH", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }) + " น.",
-  category: post.category,
+const initialPosts = posts.map((post) => ({
+  ...post,
   image:
     post.imageUrl ||
     "https://placehold.co/600x400/1a1a1a/F63049?text=Shiori+Blog",
-  author: post.author,
+  createdAt: new Date(post.createdAt).toISOString(), // Serialize date for React
 }));
 ---
-
-<script is:inline>
-  function handleBlogImageError(img) {
-    img.onerror = null;
-    img.src = "https://placehold.co/600x400/1a1a1a/F63049?text=Shiori+Blog";
-  }
-</script>
 
 <Layout
   title="รวมบันทึกทั้งหมด"
   description="อ่านบันทึก เรื่องราวเทคโนโลยี และแนวคิดต่างๆ ที่น่าสนใจจาก Shiori 栞"
   type="website"
 >
-  <div class="blog-index container">
-    <header class="page-header">
-      <h1 class="gradient-text">รวมบันทึกทั้งหมด</h1>
-      <p>คลังความทรงจำที่รวบรวมเรื่องราวที่อาจจะสำคัญ</p>
+  <div class="container pt-8 pb-24 md:pt-8 md:pb-24 overflow-x-hidden">
+    <header class="mb-20 text-center reveal">
+      <h1
+        class="text-4xl md:text-6xl font-black mb-6 pt-6 gradient-text leading-tight text-balance"
+      >
+        บันทึกทั้งหมด
+      </h1>
+      <p
+        class="text-lg md:text-xl text-text-muted max-w-[600px] mx-auto stagger-1 reveal leading-relaxed"
+      >
+        คลังความทรงจำที่รวบรวมเรื่องราวที่อาจจะสำคัญ และบันทึกมั่วๆ ของผม
+      </p>
     </header>
 
-    <div class="search-filter-container">
-      <form class="search-form" method="GET">
-        <div class="search-controls-wrapper">
-          <div class="search-input-wrapper glass">
-            <input
-              type="text"
-              name="search"
-              placeholder="ค้นหาเรื่องที่สนใจ..."
-              value={searchQuery}
-              class="search-input"
-            />
-            <button type="submit" class="btn-search-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><circle cx="11" cy="11" r="8"></circle><line
-                  x1="21"
-                  y1="21"
-                  x2="16.65"
-                  y2="16.65"></line></svg
-              >
-            </button>
-          </div>
-
-          <div class="category-select-wrapper glass">
-            <select
-              name="category"
-              class="category-select"
-              onchange="this.form.submit()"
-            >
-              <option value="">หมวดหมู่ทั้งหมด</option>
-              {
-                allCategories.map((cat) => (
-                  <option value={cat} selected={categoryFilter === cat}>
-                    {cat}
-                  </option>
-                ))
-              }
-            </select>
-            <div class="select-arrow">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg
-              >
-            </div>
-          </div>
-        </div>
-      </form>
+    <div class="reveal stagger-2">
+      <BlogFeed
+        initialPosts={initialPosts}
+        allCategories={allCategories}
+        initialTotalPages={totalPages}
+        client:load
+      />
     </div>
-
-    <div class="post-grid">
-      {
-        displayPosts.length > 0 ? (
-          displayPosts.map((post) => (
-            <article class="post-card glass">
-              <div class="post-image">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  width="600"
-                  height="400"
-                  loading="lazy"
-                  class="blog-card-img"
-                  onerror="this.onerror=null; this.src='https://placehold.co/600x400/1a1a1a/F63049?text=Shiori+Blog';"
-                />
-              </div>
-              <div class="post-content">
-                <span class="post-category">{post.category}</span>
-                <h2 class="post-title">
-                  <a href={`/blog/${post.slug}`}>{post.title}</a>
-                </h2>
-                <p class="post-excerpt">{post.excerpt}</p>
-                <div class="post-footer">
-                  <span class="post-date">{post.date}</span>
-                  <span class="post-author">By {post.author}</span>
-                </div>
-              </div>
-            </article>
-          ))
-        ) : (
-          <div class="empty-state glass">
-            <p>ไม่พบบันทึกที่คุณกำลังมองหา... ลองใช้คำค้นอื่นดูนะ 🏮</p>
-          </div>
-        )
-      }
-    </div>
-
-    {
-      totalPages > 1 && (
-        <div class="pagination">
-          {page > 1 && (
-            <a
-              href={`/blog?page=${page - 1}${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""}${categoryFilter ? `&category=${encodeURIComponent(categoryFilter)}` : ""}`}
-              class="btn-pagination"
-            >
-              ← ก่อนหน้า
-            </a>
-          )}
-          <span class="page-info">
-            {page} / {totalPages}
-          </span>
-          {page < totalPages && (
-            <a
-              href={`/blog?page=${page + 1}${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""}${categoryFilter ? `&category=${encodeURIComponent(categoryFilter)}` : ""}`}
-              class="btn-pagination"
-            >
-              ถัดไป →
-            </a>
-          )}
-        </div>
-      )
-    }
   </div>
 </Layout>
-
-<style>
-  .blog-index {
-    padding: 2rem 1rem 6rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    overflow-x: hidden;
-  }
-  .page-header {
-    margin-bottom: 4rem;
-    text-align: center;
-  }
-  .page-header h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    word-break: break-word;
-  }
-  .page-header p {
-    color: var(--color-text-muted);
-    font-size: 1.2rem;
-  }
-
-  .search-filter-container {
-    margin-bottom: 4rem;
-    display: flex;
-    justify-content: center;
-  }
-  .search-form {
-    width: 100%;
-    max-width: 800px;
-  }
-  .search-controls-wrapper {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-  }
-  .search-input-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding-right: 0.5rem;
-    border-radius: 1rem;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-  .search-input {
-    flex: 1;
-    padding: 1rem 1.5rem;
-    background: transparent;
-    border: none;
-    color: white;
-    outline: none;
-    font-size: 1rem;
-    font-family: inherit;
-  }
-  .btn-search-icon {
-    background: var(--color-primary);
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 0.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .category-select-wrapper {
-    position: relative;
-    min-width: 180px;
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .category-select {
-    width: 100%;
-    padding: 1rem 3rem 1rem 1.5rem;
-    background: transparent;
-    border: none;
-    color: white;
-    outline: none;
-    font-size: 1rem;
-    font-family: inherit;
-    appearance: none;
-    cursor: pointer;
-  }
-  .category-select option {
-    background: #111f35;
-    color: white;
-  }
-  .select-arrow {
-    position: absolute;
-    right: 1.2rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-text-muted);
-    pointer-events: none;
-  }
-
-  /* Grid System */
-  .post-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2.5rem;
-  }
-  .empty-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 6rem 2rem;
-    color: var(--color-text-muted);
-  }
-
-  /* Post Card */
-  .post-card {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-    border-radius: 1.5rem;
-    transition: all 0.3s ease;
-    padding: 0 !important; /* Force no padding on card itself */
-  }
-  .post-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--color-primary);
-  }
-  .post-image {
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    position: relative;
-  }
-  .post-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  .post-card:hover .post-image img {
-    transform: scale(1.05);
-  }
-  .post-content {
-    padding: 1.5rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .post-category {
-    color: var(--color-primary);
-    font-weight: 700;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-  .post-title {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-  .post-title a {
-    color: white;
-  }
-  .post-excerpt {
-    color: var(--color-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .post-footer {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .pagination {
-    margin-top: 5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-  }
-  .btn-pagination {
-    padding: 0.8rem 1.8rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2rem;
-    color: white;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .btn-pagination:hover {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: white;
-  }
-
-  /* Responsive Fixes */
-  @media (max-width: 768px) {
-    .blog-index {
-      padding: 2rem 1rem 4rem;
-    }
-    .page-header h1 {
-      font-size: 2.5rem;
-    }
-    .search-controls-wrapper {
-      flex-direction: column;
-    }
-    .category-select-wrapper {
-      width: 100%;
-    }
-    .post-grid {
-      grid-template-columns: 1fr; /* Force 1 column on mobile */
-      gap: 2rem;
-    }
-    .post-image {
-      height: 200px;
-    }
-    .pagination {
-      flex-direction: column;
-      gap: 1.5rem;
-      width: 100%;
-    }
-    .btn-pagination {
-      width: 100%;
-      text-align: center;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .blog-index {
-      padding-left: 0.75rem;
-      padding-right: 0.75rem;
-    }
-    .post-content {
-      padding: 1.2rem;
-    }
-    .post-title {
-      font-size: 1.3rem;
-    }
-  }
-</style>

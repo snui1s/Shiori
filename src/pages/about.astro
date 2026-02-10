@@ -1,104 +1,194 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
 ---
 
-<Layout title="About Me | Shiori 栞">
-  <section class="container about-section">
-    <div class="about-grid">
-      <div class="about-image-container">
-        <div class="image-wrapper glass">
-          <img src="/image.png" alt="Pawee (Nail)" class="profile-img" />
-        </div>
-        <div class="experience-badge glass">
-          <span class="badge-number">CPF</span>
-          <span class="badge-text">HR AI Intern</span>
-        </div>
-      </div>
+<Layout
+  title="เกี่ยวกับผม"
+  description="ทำความรู้จักกับ Shiori ผู้สร้างสรรค์บล็อกแห่งนี้"
+>
+  <div class="relative overflow-hidden">
+    <!-- Background Accents -->
+    <div
+      class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse-slow"
+    >
+    </div>
+    <div
+      class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] -z-10"
+    >
+    </div>
 
-      <div class="about-content">
-        <header>
-          <span class="sub-title">Nice to meet you!</span>
-          <h1 class="gradient-text">สวัสดีครับ ผู้ที่มาเยือนหน้าเว็บนี้</h1>
-        </header>
+    <section
+      class="container min-h-[90vh] flex flex-col md:flex-row items-center justify-center gap-12 md:gap-24 py-20 relative z-10"
+    >
+      <!-- Left: Image Section -->
+      <div class="w-full md:w-1/2 flex justify-center md:justify-end reveal">
+        <div class="relative group cursor-pointer">
+          <!-- Decorative Elements behind image -->
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-primary to-blue-500 rounded-[2.5rem] rotate-6 scale-95 opacity-70 group-hover:rotate-12 group-hover:scale-105 transition-all duration-700 blur-xl"
+          >
+          </div>
 
-        <article class="bio-text">
-          <p>
-            ปัจจุบันผมเป็น Intern ที่ <strong>CPF</strong> ในตำแหน่ง <strong
-              >HR AI (AI Engineer)</strong
-            > ครับ เว็บนี้ตั้งใจให้เป็นพื้นที่เล็กๆ สำหรับอัปเดตเรื่องราวต่างๆ ในชีวิตของผม
-          </p>
-          <p>
-            ผมสร้าง Blog นี้ขึ้นมาเพราะอยากจะใช้มันเป็นเหมือน <strong
-              >Time Capsule</strong
+          <div
+            class="relative w-[280px] h-[350px] md:w-[400px] md:h-[500px] rounded-[2.5rem] overflow-hidden glass-premium border border-white/10 shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2"
+          >
+            <img
+              src="/image.png"
+              alt="Shiori Profile"
+              class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 md:scale-110"
+            />
+
+            <!-- Overlay Gradient -->
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"
             >
-            เขียนเรื่องต่างๆ ที่อยากเขียน เพื่อให้ในอนาคตพอผมย้อนกลับมาดู จะได้ฮาตัวเอง
-          </p>
-          <p class="thank-you">
-            ขอบคุณทุกคนที่แวะเวียนเข้ามา และขอบคุณมากๆ
-            ครับที่เสียเวลาเข้ามาอ่านบันทึกมั่วๆ ของผม
-          </p>
-        </article>
+            </div>
 
-        <div class="about-actions">
-          <a href="/blog" class="btn btn-primary">ดูบันทึกทั้งหมด</a>
-          <div class="social-links">
-            <div class="dot-indicator"></div>
-            <span>Status: Building the future with AI</span>
+            <div class="absolute bottom-6 left-6 right-6">
+              <div
+                class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold uppercase tracking-widest text-white mb-2"
+              >
+                AI Engineer
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Badge -->
+          <div
+            class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-[#1a1a1a]/90 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col items-center gap-1 animate-floating z-20"
+          >
+            <span class="text-3xl md:text-4xl font-black gradient-text"
+              >CPF</span
+            >
+            <span
+              class="text-[0.65rem] md:text-xs font-bold uppercase tracking-[0.2em] text-text-muted"
+              >HR AI Intern</span
+            >
           </div>
         </div>
       </div>
+
+      <!-- Right: Content Section -->
+      <div
+        class="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left space-y-8"
+      >
+        <header class="reveal stagger-1">
+          <span
+            class="text-primary font-bold uppercase tracking-[0.4em] text-xs md:text-sm mb-4 block"
+          >
+            Nice to meet you!
+          </span>
+          <h1
+            class="text-[3rem] md:text-[5rem] font-black leading-[1] text-white gradient-text mb-6"
+          >
+            สวัสดีครับ
+          </h1>
+        </header>
+
+        <div
+          class="space-y-6 text-text-muted text-lg md:text-xl leading-relaxed reveal stagger-2 font-medium max-w-xl"
+        >
+          <p>
+            ปัจจุบันผมเป็น Intern อยู่ที่ <span
+              class="text-white font-bold decoration-primary/50 underline underline-offset-4 decoration-2"
+              >CPF</span
+            >
+            ในตำแหน่ง <span class="text-white font-bold"
+              >HR AI (AI Engineer)</span
+            >
+          </p>
+          <p>
+            เว็บนี้คือ <span class="text-primary">Time Capsule</span> ของผม ที่รวบรวมเรื่องราว
+            การเรียนรู้ และความทรงจำต่างๆ เอาไว้ เผื่อวันหนึ่งย้อนกลับมาอ่านจะได้เห็นการเติบโตของตัวเอง
+          </p>
+          <div
+            class="p-6 bg-white/5 rounded-2xl border border-white/5 relative overflow-hidden group hover:bg-white/10 transition-colors"
+          >
+            <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+            <p class="text-base italic text-white/80 relative z-10">
+              "ขอบคุณทุกคนที่แวะเวียนเข้ามา และขอบคุณมากๆ
+              ที่เสียเวลาเข้ามาอ่านบันทึกมั่วๆ ของผมครับ"
+            </p>
+            <div class="absolute -right-4 -bottom-4 text-white/5">
+              <svg
+                width="100"
+                height="100"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                ><path
+                  d="M14.017 21L14.017 18C14.017 16.8954 13.1216 16 12.017 16H9.01703V13H14.017V9H9.01703V16H12.017V21H14.017ZM19.017 21V18C19.017 16.8954 18.1216 16 17.017 16H16.017V13H21.017V9H16.017V16H17.017V21H19.017Z"
+                ></path></svg
+              >
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-col sm:flex-row gap-6 pt-4 w-full md:w-auto reveal stagger-3"
+        >
+          <a
+            href="/blog"
+            class="group relative px-8 py-4 bg-primary text-white rounded-full font-bold text-lg overflow-hidden shadow-lg shadow-primary/25 transition-all hover:scale-105 hover:shadow-primary/40 no-underline flex items-center justify-center gap-2"
+          >
+            <span class="relative z-10">Explore My Blog</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="relative z-10 group-hover:translate-x-1 transition-transform"
+              ><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+            >
+            <div
+              class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+            >
+            </div>
+          </a>
+
+          <div
+            class="flex items-center justify-center md:justify-start gap-3 px-6 py-4 bg-white/5 rounded-full border border-white/10 backdrop-blur-md"
+          >
+            <span class="relative flex h-3 w-3">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-3 w-3 bg-green-500"
+              ></span>
+            </span>
+            <span class="text-sm font-bold text-white/80"
+              >Status: <span class="text-white">Building Future</span></span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack / Interests Marquee (Optional Polish) -->
+    <div
+      class="w-full overflow-hidden py-10 opacity-80 pointer-events-none select-none"
+    >
+      <div
+        class="flex gap-16 animate-marquee whitespace-nowrap text-4xl text-transparent font-black [-webkit-text-stroke:1px_#f63049]"
+      >
+        AI ENGINEER • PRODUCT BUILDER • VIBE CODER • FILM ENTHUSIAST • PROBLEM
+        SOLVER • STORYTELLER • RAG ARCHITECT
+      </div>
     </div>
-  </section>
+  </div>
 </Layout>
 
 <style>
-  .about-section {
-    padding: 8rem 0;
-    min-height: 90vh;
-    display: flex;
-    align-items: center;
-  }
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 5rem;
-    align-items: center;
+  .animate-pulse-slow {
+    animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  .about-image-container {
-    position: relative;
-  }
-  .image-wrapper {
-    padding: 1rem;
-    border-radius: 2rem;
-    overflow: hidden;
-    transform: rotate(-3deg);
-    transition: all 0.5s ease;
-  }
-  .about-image-container:hover .image-wrapper {
-    transform: rotate(0deg) scale(1.02);
-  }
-  .profile-img {
-    width: 100%;
-    aspect-ratio: 4/5;
-    object-fit: cover;
-    border-radius: 1.5rem;
-  }
-
-  .experience-badge {
-    position: absolute;
-    bottom: -2rem;
-    right: -2rem;
-    padding: 1.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 1.5rem;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 10;
-    animation: floating 3s ease-in-out infinite;
-  }
   @keyframes floating {
     0%,
     100% {
@@ -108,135 +198,19 @@ import Layout from "../layouts/Layout.astro";
       transform: translateY(-10px);
     }
   }
-  .badge-number {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--color-primary);
-  }
-  .badge-text {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-muted);
+  .animate-floating {
+    animation: floating 4s ease-in-out infinite;
   }
 
-  .sub-title {
-    color: var(--color-primary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.9rem;
-  }
-  .about-content h1 {
-    font-size: 3.5rem;
-    margin-top: 1rem;
-    line-height: 1.1;
-  }
-
-  .bio-text {
-    margin: 2.5rem 0;
-  }
-  .bio-text p {
-    font-size: 1.15rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
-  }
-  .bio-text strong {
-    color: white;
-  }
-  .thank-you {
-    font-style: italic;
-    border-left: 3px solid var(--color-primary);
-    padding-left: 1.5rem;
-    margin-top: 3rem !important;
-  }
-
-  .about-actions {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-  }
-  .btn-primary {
-    padding: 1rem 2.5rem;
-    background: var(--color-primary);
-    color: white;
-    border-radius: 1rem;
-    font-weight: 600;
-    box-shadow: 0 10px 20px -10px var(--color-primary);
-  }
-
-  .social-links {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-  }
-  .dot-indicator {
-    width: 8px;
-    height: 8px;
-    background: #4ade80;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #4ade80;
-  }
-
-  @media (max-width: 768px) {
-    .about-section {
-      padding: 4rem 1rem;
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-    .about-grid {
-      grid-template-columns: 1fr;
-      text-align: center;
-      gap: 3rem;
-    }
-    .about-image-container {
-      max-width: 320px;
-      margin: 0 auto;
-    }
-    .image-wrapper {
-      transform: rotate(0deg); /* Remove rotation on mobile for cleaner look */
-    }
-    .experience-badge {
-      right: -1rem;
-      bottom: -1rem;
-      padding: 1rem 1.5rem;
-    }
-    .badge-number {
-      font-size: 1.2rem;
-    }
-    .about-content h1 {
-      font-size: 2rem;
-      word-break: keep-all;
-    }
-    .bio-text p {
-      font-size: 1.05rem;
-      text-align: left;
-    }
-    .thank-you {
-      text-align: left;
-      margin-top: 2rem !important;
-      padding-left: 1rem;
-    }
-    .about-actions {
-      flex-direction: column;
-      gap: 1.5rem;
-      align-items: center;
-    }
-    .btn-primary {
-      width: 100%;
-      text-align: center;
+    100% {
+      transform: translateX(-50%);
     }
   }
-
-  @media (max-width: 400px) {
-    .about-content h1 {
-      font-size: 1.75rem;
-    }
-    .experience-badge {
-      right: 0;
-      bottom: -0.5rem;
-      padding: 0.8rem 1.2rem;
-    }
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
   }
 </style>
