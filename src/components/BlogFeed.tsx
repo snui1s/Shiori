@@ -158,7 +158,7 @@ export default function BlogFeed({ initialPosts, allCategories, initialTotalPage
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="group post-card glass-premium flex flex-col overflow-hidden rounded-[2rem] transition-all duration-500 hover:-translate-y-2 hover:border-primary/40"
               >
-                 <div className="w-full h-[200px] md:h-[220px] overflow-hidden bg-white/5 relative">
+                 <a href={`/blog/${post.slug}`} className="block w-full h-[200px] md:h-[220px] overflow-hidden bg-white/5 relative cursor-pointer">
                    {post.image ? (
                      <img 
                        src={post.image} 
@@ -169,7 +169,7 @@ export default function BlogFeed({ initialPosts, allCategories, initialTotalPage
                    ) : (
                      <div className="w-full h-full flex items-center justify-center bg-white/5 text-text-muted">No Image</div>
                    )}
-                 </div>
+                 </a>
                  <div className="p-8 flex flex-col flex-1">
                     <span className="text-primary font-bold text-xs uppercase tracking-widest mb-3">{post.category}</span>
                     <h2 className="text-xl md:text-2xl font-bold mb-4 leading-snug">
