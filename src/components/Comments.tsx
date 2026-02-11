@@ -289,7 +289,7 @@ const Comments: React.FC<CommentsProps> = ({ postId, session, currentUser, isAdm
   return (
     <section className="mt-24 w-full max-w-[850px] mx-auto px-4 md:px-0 reveal">
       <h3 className="text-2xl md:text-[2.2rem] font-bold text-center mb-12 h-gradient tracking-tight">
-        Garden of Words
+        Comments
       </h3>
 
       {session ? (
@@ -298,7 +298,7 @@ const Comments: React.FC<CommentsProps> = ({ postId, session, currentUser, isAdm
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="เล่าความรู้สึกของคุณผ่านบันทึกนี้..."
+            placeholder="มีไรอยากบอกพิมเลยจ้า"
             className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white text-l outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all min-h-[140px] resize-none relative z-10"
           />
           <button 
@@ -306,7 +306,7 @@ const Comments: React.FC<CommentsProps> = ({ postId, session, currentUser, isAdm
             disabled={loading} 
             className="self-end bg-gradient-to-r from-primary to-secondary text-white px-10 py-4 rounded-full font-bold text-base transition-all hover:-translate-y-1 hover:shadow-[0_10px_25px_-5px_#f63049] active:scale-95 disabled:opacity-50 cursor-pointer relative z-10"
           >
-            {loading ? 'กำลังส่ง...' : 'ร่วมแบ่งปันความคิด'}
+            {loading ? 'กำลังส่ง...' : 'Comment'}
           </button>
         </form>
       ) : (
@@ -346,7 +346,7 @@ const Comments: React.FC<CommentsProps> = ({ postId, session, currentUser, isAdm
         {!fetchError && comments.length === 0 && (
           <div className="text-center py-20 opacity-40 flex flex-col items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square-dashed"><path d="M5 3a2 2 0 0 0-2 2"/><path d="M19 3a2 2 0 0 1 2 2"/><path d="M5 21a2 2 0 0 1-2-2"/><path d="M19 21a2 2 0 0 0 2-2"/><path d="M9 3h1"/><path d="M14 3h1"/><path d="M9 21h1"/><path d="M14 21h1"/><path d="M3 9v1"/><path d="M3 14v1"/><path d="M21 9v1"/><path d="M21 14v1"/></svg>
-            <p className="text-lg italic">ยังไม่มีใครแวะมาทิ้งบันทึกไว้เลย...</p>
+            <p className="text-lg italic">เม้นแรกเป็นของคุณแล้ว</p>
           </div>
         )}
       </div>

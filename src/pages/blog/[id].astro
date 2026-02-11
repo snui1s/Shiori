@@ -129,9 +129,9 @@ const jsonLd = {
       class="glass-premium p-8 md:p-20 rounded-[3rem] text-[1.1rem] md:text-[1.25rem] leading-relaxed md:leading-[1.9] text-slate-300 w-full mb-20 reveal stagger-3 border border-white/5 shadow-2xl"
     >
       <p
-        class="text-xl md:text-[1.6rem] text-white font-bold mb-12 leading-snug border-l-4 border-primary pl-10 py-2 bg-white/[0.02] rounded-r-3xl"
+        class="text-xl md:text-[1.6rem] text-white font-bold mb-12 leading-[1.4] border-l-8 border-primary pl-8 md:pl-14 py-8 md:py-12 pr-8 md:pr-12 bg-white/[0.03] rounded-r-[2rem] italic shadow-2xl relative overflow-hidden"
       >
-        {post.excerpt}
+        <span class="relative z-10">{post.excerpt}</span>
       </p>
       <div class="rich-text-content" set:html={post.content} />
     </div>
