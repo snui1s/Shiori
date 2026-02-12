@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /login
+Disallow: /signup
+Disallow: /profile
 
 Sitemap: https://shiori-blog.space/sitemap.xml

@@ -1,27 +1,31 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
-import react from '@astrojs/react';
+import react from "@astrojs/react";
 
-import db from '@astrojs/db';
+import db from "@astrojs/db";
 
-import vercel from '@astrojs/vercel';
+import vercel from "@astrojs/vercel";
 
-import sitemap from '@astrojs/sitemap';
-import auth from 'auth-astro';
+import auth from "auth-astro";
 
-import tailwindcss from '@tailwindcss/vite';
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://shiori-blog.space',
-  integrations: [react(), db(), sitemap(), auth()],
-  output: 'server',
+  site: "https://shiori-blog.space",
+  integrations: [react(), db(), auth()],
+  output: "server",
   adapter: vercel(),
   vite: {
     plugins: [tailwindcss()],
   },
   image: {
-    domains: ['res.cloudinary.com', 'ui-avatars.com', 'placehold.co', 'lh3.googleusercontent.com'],
+    domains: [
+      "res.cloudinary.com",
+      "ui-avatars.com",
+      "placehold.co",
+      "lh3.googleusercontent.com",
+    ],
   },
 });

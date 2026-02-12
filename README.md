@@ -33,6 +33,7 @@ It is optimized for Vercel with Turso (LibSQL) as the remote database, but can b
 ### For Readers
 
 - **Threaded Conversations** — Nested comment system with reply support, keeping discussions organized and easy to follow.
+- **Dynamic Search** — Powerful internal search that scans titles, excerpts, and full content to help readers find specific topics.
 - **Instant Feedback** — Real-time toast notifications for every interaction (posting, replying, errors).
 - **One-Click Login** — Sign in with Google OAuth or register with email/password. No unnecessary friction.
 - **Responsive Design** — Fully optimized for mobile, tablet, and desktop with a dark glassmorphism aesthetic.
@@ -47,10 +48,11 @@ It is optimized for Vercel with Turso (LibSQL) as the remote database, but can b
 ### Under the Hood
 
 - **Server-Side Rendering** — Astro hybrid mode with selective client-side hydration for interactive components.
+- **Dynamic Sitemap** — A custom database-driven `sitemap.xml` that ensures Google discovers every new post automatically.
+- **Advanced SEO** — Comprehensive structured data (JSON-LD) for `BlogPosting` and `BreadcrumbList` to enhance search engine results.
 - **Image Optimization** — Automatic Cloudinary transformations for responsive, optimized images.
-- **SEO Ready** — Structured data (JSON-LD), meta tags, Open Graph, sitemap generation, and semantic HTML.
 - **Type Safety** — Full TypeScript coverage across API routes, components, and database queries.
-- **Testing** — Vitest setup for unit and integration testing.
+- **Analytics Ready** — Integrated Google Analytics 4 (GA4) setup.
 
 ---
 
