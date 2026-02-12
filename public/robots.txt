@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shiori-blog.space/sitemap-index.xml
+Sitemap: https://shiori-blog.space/sitemap.xml
