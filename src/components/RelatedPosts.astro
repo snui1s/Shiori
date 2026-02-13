@@ -1,0 +1,93 @@
+---
+import { db, Post, eq, ne, and, desc, sql } from "astro:db";
+import { Image } from "astro:assets";
+import { getOptimizedImageUrl } from "../lib/images";
+
+interface Props {
+  currentPostId: number;
+  currentCategory: string;
+}
+
+const { currentPostId, currentCategory } = Astro.props;
+
+// 1. Fetch up to 10 posts from the same category (excluding current)
+const sameCategoryPosts = await db
+  .select()
+  .from(Post)
+  .where(and(eq(Post.category, currentCategory), ne(Post.id, currentPostId)))
+  .orderBy(desc(Post.createdAt))
+  .limit(10);
+
+let recommendedPosts = [...sameCategoryPosts];
+
+// 2. If less than 3, fetch from other categories
+if (recommendedPosts.length < 3) {
+  const otherCategoryPosts = await db
+    .select()
+    .from(Post)
+    .where(ne(Post.id, currentPostId))
+    .orderBy(desc(Post.createdAt))
+    .limit(10);
+
+  // Filter out posts already in recommendedPosts
+  const existingIds = new Set(recommendedPosts.map(p => p.id));
+  const filteredOther = otherCategoryPosts.filter(p => !existingIds.has(p.id));
+  
+  recommendedPosts = [...recommendedPosts, ...filteredOther];
+}
+
+// 3. Shuffle and pick 3
+const shuffled = recommendedPosts.sort(() => 0.5 - Math.random());
+const finalPosts = shuffled.slice(0, 3).sort((a, b) => 
+  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+);
+
+if (finalPosts.length === 0) return null;
+---
+
+<section class="mt-20 border-t border-white/5 pt-20 reveal">
+  <div class="flex items-center justify-between mb-12 px-4 md:px-0">
+    <div>
+      <h2 class="text-3xl md:text-4xl font-black h-gradient">เเนะนำให้อ่านต่อ</h2>
+      <p class="text-text-muted mt-2">สำรวจเรื่องราวอื่นๆ ที่คุณอาจสนใจ</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {finalPosts.map((post) => {
+      const optimizedImage = getOptimizedImageUrl(post.imageUrl || "", 600);
+      return (
+        <article class="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 border border-white/5 reveal" style={`animation-delay: ${0.1 * (finalPosts.indexOf(post) + 1)}s`}>
+          <a href={`/blog/${post.slug}`} class="block w-full h-[200px] overflow-hidden bg-white/5 relative">
+            <Image
+              src={optimizedImage} 
+              alt={post.title} 
+              width={600}
+              height={400}
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+            />
+            <div class="absolute top-4 left-4">
+              <span class="px-4 py-1.5 bg-black/60 backdrop-blur-md rounded-full text-[0.7rem] font-bold text-primary uppercase tracking-wider border border-white/10">
+                {post.category}
+              </span>
+            </div>
+          </a>
+          <div class="p-8 flex flex-col flex-1">
+            <h3 class="text-xl font-bold mb-4 leading-snug">
+              <a href={`/blog/${post.slug}`} class="text-white no-underline transition-colors hover:text-primary line-clamp-2">
+                {post.title}
+              </a>
+            </h3>
+            <p class="text-text-muted text-sm leading-relaxed line-clamp-2 mt-auto">
+              {post.excerpt}
+            </p>
+            <div class="pt-6 mt-6 border-t border-white/5 flex items-center gap-3 text-xs text-text-muted/60">
+              <span>{new Date(post.createdAt).toLocaleDateString("th-TH", { timeZone: "Asia/Bangkok", year: "numeric", month: "short", day: "numeric" })}</span>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>

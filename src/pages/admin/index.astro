@@ -26,7 +26,7 @@ const posts = await db.select().from(Post).orderBy(desc(Post.createdAt));
   <div class="container py-16 md:py-24 min-h-[80vh] flex justify-center">
     {
       !isAuthorized ? (
-        <div class="max-w-[420px] w-full p-12 text-center glass rounded-[2rem] self-center animate-fade-in">
+        <div class="max-w-[420px] w-full p-12 text-center glass rounded-4xl self-center animate-fade-in">
           <h1 class="text-[2.5rem] font-bold mb-4 h-gradient">Admin Access</h1>
           <p class="text-text-muted mb-8 text-base leading-relaxed">
             เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงส่วนนี้ได้
@@ -71,7 +71,7 @@ const posts = await db.select().from(Post).orderBy(desc(Post.createdAt));
             </div>
           </div>
 
-          <div class="glass overflow-hidden rounded-[1.5rem] border border-white/5">
+          <div class="glass overflow-hidden rounded-3xl border border-white/5">
             {posts.length === 0 ? (
               <div class="py-24 text-center text-text-muted">
                 <h3 class="text-xl font-bold text-white mb-2">
@@ -102,12 +102,13 @@ const posts = await db.select().from(Post).orderBy(desc(Post.createdAt));
                     {posts.map((post) => (
                       <tr
                         id={`post-${post.slug}`}
-                        class="border-t border-white/5 transition-colors hover:bg-white/[0.01]"
+                        class="border-t border-white/5 transition-colors hover:bg-white/1"
                       >
                         <td class="p-6 text-text-muted whitespace-nowrap align-top">
                           {new Date(post.createdAt).toLocaleDateString(
                             "th-TH",
                             {
+                              timeZone: "Asia/Bangkok",
                               day: "numeric",
                               month: "short",
                             },
