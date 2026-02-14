@@ -37,8 +37,16 @@ export default function BlogFeed({
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef(true);
 
   const fetchPosts = useCallback(async () => {
+    // Only skip the fetch on the very first mount if filters are empty
+    if (isInitialMount.current && !search && !category && page === 1) {
+      isInitialMount.current = false;
+      return;
+    }
+    isInitialMount.current = false;
+
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -199,9 +207,29 @@ export default function BlogFeed({
 
       {/* Grid Content */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300`}
       >
-        {posts.length > 0 ? (
+        {loading ? (
+          /* Skeleton View */
+          Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={`skeleton-${i}`}
+              className="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl border border-white/5 relative"
+            >
+              <div className="w-full aspect-video md:aspect-16/10 bg-white/5 skeleton" />
+              <div className="p-8 flex flex-col flex-1 gap-4">
+                <div className="skeleton skeleton-text w-20" />
+                <div className="skeleton skeleton-heading" />
+                <div className="skeleton skeleton-text" />
+                <div className="skeleton skeleton-text w-2/3" />
+                <div className="pt-8 mt-6 border-t border-white/5 flex justify-between">
+                  <div className="skeleton skeleton-text w-24" />
+                  <div className="skeleton skeleton-text w-20" />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : posts.length > 0 ? (
           posts.map((post, index) => (
             <motion.article
               key={post.slug}
@@ -212,7 +240,7 @@ export default function BlogFeed({
             >
               <a
                 href={`/blog/${post.slug}`}
-                className="block w-full aspect-video md:aspect-16/10 overflow-hidden bg-white/5 relative cursor-pointer"
+                className="block w-full aspect-video md:aspect-16/10 overflow-hidden bg-white/5 relative cursor-pointer skeleton"
               >
                 {post.image ? (
                   <img

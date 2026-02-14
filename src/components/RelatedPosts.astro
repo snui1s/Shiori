@@ -67,14 +67,15 @@ const placeholderImage = "https://placehold.co/600x400/1a1a1a/F63049?text=Shiori
       
       return (
         <article class="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 border border-white/5 reveal" style={`animation-delay: ${0.1 * (i + 1)}s`}>
-          <a href={`/blog/${post.slug}`} class="block w-full aspect-video overflow-hidden bg-white/5 relative">
+          <a href={`/blog/${post.slug}`} class="block w-full aspect-video overflow-hidden bg-white/5 relative skeleton">
             <Image
               src={optimizedImage} 
               alt={post.title} 
               width={600}
               height={338}
               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              loading="lazy"
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchpriority={i === 0 ? "high" : "low"}
             />
             <div class="absolute top-4 left-4">
               <span class="px-4 py-1.5 bg-black/60 backdrop-blur-md rounded-full text-[0.7rem] font-bold text-primary uppercase tracking-wider border border-white/10">
