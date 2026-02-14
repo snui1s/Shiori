@@ -149,19 +149,20 @@ const nowStatus = {
           posts.length > 0 ? (
             posts.map((post, index) => (
               <article
-                class={`reveal stagger-${(index % 3) + 1} group post-card glass-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 flex flex-col rounded-[2rem]`}
+                class={`reveal stagger-${(index % 3) + 1} group post-card glass-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 flex flex-col rounded-4xl`}
               >
                 <a
-                  href={`/blog/${post.id}`}
-                  class="block h-[220px] overflow-hidden bg-white/5 cursor-pointer"
-                >
+                   href={`/blog/${post.id}`}
+                   class="block h-[220px] overflow-hidden bg-white/5 cursor-pointer skeleton"
+                 >
                   <Image
                     src={post.image}
                     alt={post.title}
                     width={600}
                     height={400}
-                    loading="lazy"
+                    loading={index < 2 ? "eager" : "lazy"}
                     decoding="async"
+                    fetchpriority={index < 2 ? "high" : "low"}
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </a>
@@ -216,7 +217,7 @@ const nowStatus = {
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
           <div
-            class="now-item bg-white/[0.03] p-6 rounded-2xl border border-white/5 transition-all duration-300 hover:bg-white/[0.06] hover:-translate-y-1"
+            class="now-item bg-white/3 p-6 rounded-2xl border border-white/5 transition-all duration-300 hover:bg-white/6 hover:-translate-y-1"
           >
             <span
               class="block text-[0.85rem] text-text-muted uppercase tracking-widest mb-2 font-bold"
@@ -227,7 +228,7 @@ const nowStatus = {
             </p>
           </div>
           <div
-            class="now-item bg-white/[0.03] p-6 rounded-2xl border border-white/5 transition-all duration-300 hover:bg-white/[0.06] hover:-translate-y-1"
+            class="now-item bg-white/3 p-6 rounded-2xl border border-white/5 transition-all duration-300 hover:bg-white/6 hover:-translate-y-1"
           >
             <span
               class="block text-[0.85rem] text-text-muted uppercase tracking-widest mb-2 font-bold"
@@ -236,7 +237,7 @@ const nowStatus = {
             <p class="text-lg font-bold text-white mb-0">{nowStatus.reading}</p>
           </div>
           <div
-            class="now-item bg-white/[0.03] p-6 rounded-2xl border border-white/5 transition-all duration-300 hover:bg-white/[0.06] hover:-translate-y-1"
+            class="now-item bg-white/3 p-6 rounded-2xl border border-white/5 transition-all duration-300 hover:bg-white/6 hover:-translate-y-1"
           >
             <span
               class="block text-[0.85rem] text-text-muted uppercase tracking-widest mb-2 font-bold"
