@@ -14,6 +14,7 @@ import tailwindcss from "@tailwindcss/vite";
 // https://astro.build/config
 export default defineConfig({
   site: "https://shiori-blog.space",
+  compressHTML: true,
   integrations: [react(), db(), auth()],
   output: "server",
   adapter: vercel(),

@@ -34,7 +34,7 @@ const userName = session?.user?.name || "User";
 const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f63049&color=fff`;
 const userAvatar =
   session?.user?.image && session.user.image !== ""
-    ? getOptimizedImageUrl(session.user.image, 64) // Tiny for header
+    ? getOptimizedImageUrl(session.user.image, 128) // Slightly larger for better quality on retina
     : fallbackAvatar;
 ---
 
@@ -75,11 +75,6 @@ const userAvatar =
       rel="stylesheet"
     />
 
-    <!-- Cloudinary -->
-    <script
-      is:inline
-      src="https://upload-widget.cloudinary.com/global/all.js"
-      type="text/javascript"></script>
 
     <!-- Google Analytics -->
     <script
@@ -123,7 +118,7 @@ const userAvatar =
       }}
     />
     <div
-      class="relative md:sticky top-0 z-[1000] pt-6 md:pt-8 pointer-events-none transition-all duration-500"
+      class="relative md:sticky top-0 z-1000 pt-6 md:pt-8 pointer-events-none transition-all duration-500"
     >
       <div class="container">
         <nav
@@ -139,7 +134,7 @@ const userAvatar =
               >
                 <div class="w-4 h-1 bg-[#1a1a1a] rounded-sm"></div>
                 <div
-                  class="flex-1 w-7 bg-gradient-to-r from-primary via-[#cc233b] to-primary rounded-[10px] relative flex flex-col justify-evenly border border-black/20 overflow-hidden"
+                  class="flex-1 w-7 bg-linear-to-r from-primary via-[#cc233b] to-primary rounded-[10px] relative flex flex-col justify-evenly border border-black/20 overflow-hidden"
                 >
                   <div
                     class="w-full h-px bg-black/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]"
@@ -317,42 +312,53 @@ const userAvatar =
       class="py-16 px-4 text-center text-text-muted border-t border-white/5"
     >
       <div class="container">
-        <div class="flex flex-wrap justify-center items-center gap-6 mb-6">
-          <a
-            href="/"
-            class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline"
-            >หน้าหลัก</a
-          >
-          <span class="opacity-30 hidden sm:inline">•</span>
-          <a
-            href="/about"
-            class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline"
-            >เกี่ยวกับผม</a
-          >
-          <span class="opacity-30 hidden sm:inline">•</span>
-          <a
-            href="/blog"
-            class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline"
-            >รวมบันทึก</a
-          >
-          <span class="opacity-30 hidden sm:inline">•</span>
-          <a
-            href="/privacy"
-            class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline"
-            >นโยบายความเป็นส่วนตัว</a
-          >
-          <span class="opacity-30 hidden sm:inline">•</span>
-          <a
-            href="/terms"
-            class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline"
-            >ข้อตกลงการใช้งาน</a
-          >
+        <div class="flex flex-col lg:flex-row justify-center items-center gap-x-8 gap-y-4 mb-8">
+          <div class="flex items-center gap-x-8 gap-y-4">
+            <a
+              href="/"
+              class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline py-2"
+              >หน้าหลัก</a
+            >
+            <span class="opacity-30 hidden sm:inline">•</span>
+            <a
+              href="/about"
+              class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline py-2"
+              >เกี่ยวกับผม</a
+            >
+            <span class="opacity-30 hidden sm:inline">•</span>
+            <a
+              href="/blog"
+              class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline py-2"
+              >รวมบันทึก</a
+            >
+          </div>
+          <span class="opacity-30 hidden lg:inline">•</span>
+          <div class="flex items-center gap-x-8 gap-y-4">
+            <a
+              href="/privacy"
+              class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline py-2"
+              >นโยบายความเป็นส่วนตัว</a
+            >
+            <span class="opacity-30 hidden sm:inline">•</span>
+            <a
+              href="/terms"
+              class="text-text-muted text-[0.95rem] font-medium hover:text-white transition-colors no-underline py-2"
+              >ข้อตกลงการใช้งาน</a
+            >
+          </div>
         </div>
         <p class="text-sm opacity-60">
           &copy; {new Date().getFullYear()} Shiori 栞. All rights reserved.
         </p>
       </div>
     </footer>
+
+    <!-- Cloudinary - Moved to bottom to avoid render-blocking -->
+    <script
+      is:inline
+      defer
+      src="https://upload-widget.cloudinary.com/global/all.js"
+      type="text/javascript"></script>
   </body>
 </html>
 
