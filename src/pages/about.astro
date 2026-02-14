@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import { getOptimizedImageUrl } from "../lib/images";
 ---
 
 <Layout
@@ -26,7 +27,7 @@ import { Image } from "astro:assets";
         <div class="relative group cursor-pointer">
           <!-- Decorative Elements behind image -->
           <div
-            class="absolute inset-0 bg-gradient-to-tr from-primary to-blue-500 rounded-[2.5rem] rotate-6 scale-95 opacity-70 group-hover:rotate-12 group-hover:scale-105 transition-all duration-700 blur-xl"
+            class="absolute inset-0 bg-linear-to-tr from-primary to-blue-500 rounded-[2.5rem] rotate-6 scale-95 opacity-70 group-hover:rotate-12 group-hover:scale-105 transition-all duration-700 blur-xl"
           >
           </div>
 
@@ -34,14 +35,14 @@ import { Image } from "astro:assets";
             class="relative w-[280px] h-[350px] md:w-[400px] md:h-[500px] rounded-[2.5rem] overflow-hidden glass-premium border border-white/10 shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2"
           >
             <img
-              src="/image.png"
+              src={getOptimizedImageUrl("/image.png", 600)}
               alt="Shiori Profile"
               class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 md:scale-110"
             />
 
             <!-- Overlay Gradient -->
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"
+              class="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-60"
             >
             </div>
 
@@ -80,7 +81,7 @@ import { Image } from "astro:assets";
             Nice to meet you!
           </span>
           <h1
-            class="text-[3rem] md:text-[5rem] font-black leading-[1] text-white gradient-text mb-6"
+            class="text-[3rem] md:text-[5rem] font-black leading-none text-white gradient-text mb-6"
           >
             สวัสดีครับ
           </h1>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getOptimizedImageUrl } from "../lib/images";
 
 interface Post {
   id: number | string;
@@ -211,12 +212,14 @@ export default function BlogFeed({
             >
               <a
                 href={`/blog/${post.slug}`}
-                className="block w-full h-[200px] md:h-[220px] overflow-hidden bg-white/5 relative cursor-pointer"
+                className="block w-full aspect-video md:aspect-16/10 overflow-hidden bg-white/5 relative cursor-pointer"
               >
                 {post.image ? (
                   <img
-                    src={post.image}
+                    src={getOptimizedImageUrl(post.image, 600)}
                     alt={post.title}
+                    width={600}
+                    height={375}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
                   />
@@ -271,7 +274,7 @@ export default function BlogFeed({
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary transition-all cursor-pointer"
+            className="px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary transition-all cursor-pointer min-w-[120px]"
           >
             ← ก่อนหน้า
           </button>
@@ -281,7 +284,7 @@ export default function BlogFeed({
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary transition-all cursor-pointer"
+            className="px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary transition-all cursor-pointer min-w-[120px]"
           >
             ถัดไป →
           </button>
