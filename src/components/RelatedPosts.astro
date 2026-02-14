@@ -47,15 +47,14 @@ const finalPosts = shuffled.slice(0, 3).sort((a, b) =>
   new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 );
 
-if (finalPosts.length === 0) return null;
-
 const placeholderImage = "https://placehold.co/600x400/1a1a1a/F63049?text=Shiori+Blog";
 ---
 
+{finalPosts.length > 0 && (
 <section class="mt-20 border-t border-white/5 pt-20 reveal">
   <div class="flex items-center justify-between mb-12">
     <div>
-      <h2 class="text-3xl md:text-4xl font-black h-gradient">เเนะนำให้อ่านต่อ</h2>
+      <h2 class="text-3xl md:text-4xl font-black h-gradient">แนะนำให้อ่านต่อ</h2>
       <p class="text-text-muted mt-2">สำรวจเรื่องราวอื่นๆ ที่คุณอาจสนใจ</p>
     </div>
   </div>
@@ -101,3 +100,4 @@ const placeholderImage = "https://placehold.co/600x400/1a1a1a/F63049?text=Shiori
     })}
   </div>
 </section>
+)}
