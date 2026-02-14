@@ -6,6 +6,7 @@ import { getSession } from "auth-astro/server";
 import { getOptimizedImageUrl } from "../../lib/images";
 import Comments from "../../components/Comments";
 import RelatedPosts from "../../components/RelatedPosts.astro";
+import { getOptimizedContentHtml } from "../../lib/images";
 
 const session = await getSession(Astro.request);
 
@@ -42,13 +43,7 @@ const entryImageUrl =
 const post = {
   title: entry.title,
   excerpt: entry.excerpt,
-  content: (entry.content || "").replace(
-    /<img ([^>]+)>/g,
-    (match, attrs) => {
-      if (attrs.includes('loading="')) return match;
-      return `<img ${attrs} loading="lazy" decoding="async" />`;
-    }
-  ),
+  content: getOptimizedContentHtml(entry.content || ""),
   date:
     new Date(entry.createdAt).toLocaleString("th-TH", {
       timeZone: "Asia/Bangkok",
