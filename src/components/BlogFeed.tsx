@@ -21,6 +21,14 @@ interface BlogFeedProps {
   initialTotalPages: number;
 }
 
+/**
+ * Render a searchable, filterable, paginated blog post feed with a category dropdown and responsive grid.
+ *
+ * @param initialPosts - Initial array of posts to display in the feed
+ * @param allCategories - Available category names used by the category dropdown
+ * @param initialTotalPages - Initial number of pages for pagination
+ * @returns A React element that renders the blog feed UI (search, category filter, posts grid, and pagination)
+ */
 export default function BlogFeed({
   initialPosts,
   allCategories,
