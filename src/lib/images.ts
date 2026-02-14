@@ -1,6 +1,9 @@
 /**
- * Optimizes a Cloudinary URL by adding auto-format, auto-quality, and resizing parameters.
- * If the URL is not a Cloudinary URL, it returns the original URL.
+ * Produce an optimized Cloudinary image URL by adding format, quality, and resize transformations when applicable.
+ *
+ * @param url - The original image URL to optimize.
+ * @param width - Desired maximum image width to request from Cloudinary (defaults to 800).
+ * @returns The transformed Cloudinary URL with `f_auto,q_auto,w_<width>,c_limit` inserted when the input is a Cloudinary `/upload/` URL that does not already include `f_auto`; otherwise returns the original `url`.
  */
 export function getOptimizedImageUrl(url: string, width: number = 800) {
   if (!url) return url;
@@ -24,7 +27,13 @@ export function getOptimizedImageUrl(url: string, width: number = 800) {
 }
 
 /**
- * Parses HTML content and optimizes all Cloudinary <img> tags within it.
+ * Optimize Cloudinary <img> tags found in an HTML string.
+ *
+ * Replaces Cloudinary image `src` values with optimized URLs (w=1000) and ensures
+ * each `<img>` includes `loading="lazy"` and `decoding="async"` when not present.
+ *
+ * @param html - The HTML content to process
+ * @returns The input HTML with Cloudinary `<img>` `src` attributes optimized and missing `loading`/`decoding` attributes added
  */
 export function getOptimizedContentHtml(html: string) {
   if (!html) return html;
