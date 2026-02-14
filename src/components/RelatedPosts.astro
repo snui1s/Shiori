@@ -46,14 +46,14 @@ if (finalPosts.length === 0) return null;
 ---
 
 <section class="mt-20 border-t border-white/5 pt-20 reveal">
-  <div class="flex items-center justify-between mb-12 px-4 md:px-0">
+  <div class="flex items-center justify-between mb-12">
     <div>
       <h2 class="text-3xl md:text-4xl font-black h-gradient">เเนะนำให้อ่านต่อ</h2>
       <p class="text-text-muted mt-2">สำรวจเรื่องราวอื่นๆ ที่คุณอาจสนใจ</p>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {finalPosts.map((post) => {
       const optimizedImage = getOptimizedImageUrl(post.imageUrl || "", 600);
       return (
