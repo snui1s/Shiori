@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
-import { getOptimizedImageUrl } from "../lib/images";
 ---
 
 <Layout
@@ -34,9 +33,11 @@ import { getOptimizedImageUrl } from "../lib/images";
           <div
             class="relative w-[280px] h-[350px] md:w-[400px] md:h-[500px] rounded-[2.5rem] overflow-hidden glass-premium border border-white/10 shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2"
           >
-            <img
-              src={getOptimizedImageUrl("/image.png", 600)}
+            <Image
+              src="/image.png"
               alt="Shiori Profile"
+              width={800}
+              height={1000}
               class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 md:scale-110"
             />
 

@@ -31,8 +31,8 @@ export function getOptimizedContentHtml(html: string) {
 
   // Regex to find <img> tags and extract their src
   return html.replace(
-    /<img\s+([^>]*?)src="([^"]+)"([^>]*?)>/gi,
-    (match, before, src, after) => {
+    /<img\s+([^>]*?)src=(['"])([^'"]+)\2([^>]*?)>/gi,
+    (match, before, quote, src, after) => {
       const optimizedSrc = getOptimizedImageUrl(src, 1000); // Higher width for content images
 
       // Ensure loading="lazy" and decoding="async" are present if not already
@@ -44,7 +44,7 @@ export function getOptimizedContentHtml(html: string) {
         newTag = newTag.replace("<img ", '<img decoding="async" ');
       }
 
-      return newTag;
+      return newTag + ">";
     },
   );
 }

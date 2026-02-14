@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getOptimizedImageUrl } from "../lib/images";
 
@@ -38,15 +38,7 @@ export default function BlogFeed({
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Debounce Search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchPosts();
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search, category, page]);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -67,7 +59,15 @@ export default function BlogFeed({
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, category, page]);
+
+  // Debounce Search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchPosts();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [fetchPosts]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -207,7 +207,7 @@ export default function BlogFeed({
               key={post.slug}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+              transition={{ duration: 0.4, delay: Math.min(index * 0.1, 0.5) }}
               className="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/30 border border-white/5 hover:shadow-[0_20px_40px_rgba(246,48,73,0.1)] relative"
             >
               <a

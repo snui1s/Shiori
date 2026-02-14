@@ -36,13 +36,20 @@ if (recommendedPosts.length < 3) {
   recommendedPosts = [...recommendedPosts, ...filteredOther];
 }
 
-// 3. Shuffle and pick 3
-const shuffled = recommendedPosts.sort(() => 0.5 - Math.random());
+// 3. Fisher-Yates shuffle and pick 3
+const shuffled = [...recommendedPosts];
+for (let i = shuffled.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+}
+
 const finalPosts = shuffled.slice(0, 3).sort((a, b) => 
   new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 );
 
 if (finalPosts.length === 0) return null;
+
+const placeholderImage = "https://placehold.co/600x400/1a1a1a/F63049?text=Shiori+Blog";
 ---
 
 <section class="mt-20 border-t border-white/5 pt-20 reveal">
@@ -54,10 +61,13 @@ if (finalPosts.length === 0) return null;
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {finalPosts.map((post) => {
-      const optimizedImage = getOptimizedImageUrl(post.imageUrl || "", 600);
+    {finalPosts.map((post, i) => {
+      // Guard against empty imageUrl to prevent Astro <Image> build error
+      const imageSrc = post.imageUrl || placeholderImage;
+      const optimizedImage = getOptimizedImageUrl(imageSrc, 600);
+      
       return (
-        <article class="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 border border-white/5 reveal" style={`animation-delay: ${0.1 * (finalPosts.indexOf(post) + 1)}s`}>
+        <article class="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 border border-white/5 reveal" style={`animation-delay: ${0.1 * (i + 1)}s`}>
           <a href={`/blog/${post.slug}`} class="block w-full aspect-video overflow-hidden bg-white/5 relative">
             <Image
               src={optimizedImage} 
