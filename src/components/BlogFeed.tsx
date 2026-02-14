@@ -53,7 +53,7 @@ export default function BlogFeed({
         search,
         category,
         page: page.toString(),
-        limit: "9",
+        limit: "12",
       });
 
       const res = await fetch(`/api/posts?${params.toString()}`);
@@ -199,7 +199,7 @@ export default function BlogFeed({
 
       {/* Grid Content */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-3 gap-8 transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}
       >
         {posts.length > 0 ? (
           posts.map((post, index) => (
@@ -208,7 +208,7 @@ export default function BlogFeed({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/40"
+              className="group post-card glass-premium flex flex-col overflow-hidden rounded-4xl transition-all duration-500 hover:-translate-y-2 hover:border-primary/30 border border-white/5 hover:shadow-[0_20px_40px_rgba(246,48,73,0.1)] relative"
             >
               <a
                 href={`/blog/${post.slug}`}
